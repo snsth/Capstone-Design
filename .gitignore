@@ -1,3 +1,6 @@
+# Claude Code local settings (user-specific, not shared)
+.claude/
+
 # This .gitignore file should be placed at the root of your Unity project directory
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
@@ -34,6 +37,9 @@
 # Visual Studio cache directory
 .vs/
 
+# JetBrains Rider IDE directory
+.idea/
+
 # Gradle cache directory
 .gradle/
 
@@ -43,6 +49,7 @@ ExportedObj/
 *.csproj
 *.unityproj
 *.sln
+*.slnx
 *.suo
 *.tmp
 *.user
@@ -54,6 +61,7 @@ ExportedObj/
 *.mdb
 *.opendb
 *.VC.db
+
 
 # Unity3D generated meta files
 *.pidb.meta
