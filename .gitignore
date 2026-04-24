@@ -47,3 +47,6 @@ crashlytics-build.properties
 
 # Claude Code
 .claude/
+
+# Project description documents
+Project_description/
