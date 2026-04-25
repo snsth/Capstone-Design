@@ -1,0 +1,158 @@
+fileFormatVersion: 2
+guid: e97a02d4f624aef4cba0006d46803991
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: dash
+    100004: gauges
+    100006: indicator-speed
+    100008: indicator-trm
+    100010: interior
+    100012: mirror-left
+    100014: mirror-middle
+    100016: mirror-right
+    100018: steering-wheel
+    100020: window-left
+    100022: window-right
+    100024: windshield
+    400000: //RootNode
+    400002: dash
+    400004: gauges
+    400006: indicator-speed
+    400008: indicator-trm
+    400010: interior
+    400012: mirror-left
+    400014: mirror-middle
+    400016: mirror-right
+    400018: steering-wheel
+    400020: window-left
+    400022: window-right
+    400024: windshield
+    2100000: dashboard
+    2100002: interior
+    2100004: gauges
+    2100006: 21 - Default
+    2100008: No Name
+    2300000: dash
+    2300002: gauges
+    2300004: indicator-speed
+    2300006: indicator-trm
+    2300008: interior
+    2300010: mirror-left
+    2300012: mirror-middle
+    2300014: mirror-right
+    2300016: steering-wheel
+    2300018: window-left
+    2300020: window-right
+    2300022: windshield
+    3300000: dash
+    3300002: gauges
+    3300004: indicator-speed
+    3300006: indicator-trm
+    3300008: interior
+    3300010: mirror-left
+    3300012: mirror-middle
+    3300014: mirror-right
+    3300016: steering-wheel
+    3300018: window-left
+    3300020: window-right
+    3300022: windshield
+    4300000: dash
+    4300002: interior
+    4300004: steering-wheel
+    4300006: gauges
+    4300008: indicator-trm
+    4300010: indicator-speed
+    4300012: mirror-right
+    4300014: mirror-left
+    4300016: windshield
+    4300018: window-left
+    4300020: window-right
+    4300022: mirror-middle
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
