@@ -4,6 +4,19 @@ public class PlayerCameraMovement : MonoBehaviour
     public Transform playerTransform;
     public Transform cameraTransform;
     public PlayerMovement playerMovement;
+    public Transform initialCameraAnchor;
+    public float attachDuration = 1.2f;
+    public float transitionFov = 45f;
+    public bool useTransitionFov = true;
+    public Behaviour transitionPostProcess;
+    public bool lockPlayerMovementDuringAttach = true;
+    public Vector2 preTransitionDelayRange = new Vector2(0.05f, 0.1f);
+    public float transitionShakeStartStrength = 0.03f;
+    public float transitionShakeDuration = 0.2f;
+    public AudioSource transitionAudioSource;
+    public AudioClip crtOffClip;
+    public AudioClip staticNoiseClip;
+    public bool loopStaticDuringTransition = true;
 
     public float mouseSensitivity = 5.5f;
     public float lookSmoothing = 0.03f;
@@ -38,8 +51,11 @@ public class PlayerCameraMovement : MonoBehaviour
     Vector2 currentLookDelta;
     Vector2 lookDeltaVelocity;
     Vector3 cameraDefaultLocalPos;
+    Quaternion cameraDefaultLocalRot;
     Camera cachedCamera;
     float movementBlend;
+    bool isAttached;
+    bool isAttaching;
 
     void Start()
     {
@@ -61,10 +77,42 @@ public class PlayerCameraMovement : MonoBehaviour
         if (cameraTransform != null)
         {
             cameraDefaultLocalPos = cameraTransform.localPosition;
+            cameraDefaultLocalRot = cameraTransform.localRotation;
             cachedCamera = cameraTransform.GetComponent<Camera>();
             if (cachedCamera != null)
             {
                 cachedCamera.fieldOfView = baseFov;
+            }
+
+            if (initialCameraAnchor != null)
+            {
+                cameraTransform.SetParent(null);
+                cameraTransform.position = initialCameraAnchor.position;
+                cameraTransform.rotation = initialCameraAnchor.rotation;
+                isAttached = false;
+
+                if (cachedCamera != null && useTransitionFov)
+                {
+                    cachedCamera.fieldOfView = transitionFov;
+                }
+
+                if (transitionPostProcess != null)
+                {
+                    transitionPostProcess.enabled = true;
+                }
+            }
+            else
+            {
+                isAttached = true;
+            }
+        }
+
+        if (transitionAudioSource == null)
+        {
+            transitionAudioSource = GetComponent<AudioSource>();
+            if (transitionAudioSource == null && cameraTransform != null)
+            {
+                transitionAudioSource = cameraTransform.GetComponent<AudioSource>();
             }
         }
 
@@ -77,8 +125,132 @@ public class PlayerCameraMovement : MonoBehaviour
 
     void LateUpdate()
     {
+        if (!isAttached)
+        {
+            return;
+        }
+
         UpdateLook();
         UpdateCameraEffects();
+    }
+
+    void Update()
+    {
+        if (isAttached || isAttaching)
+        {
+            return;
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            StartCoroutine(AttachCameraToPlayer());
+        }
+    }
+
+    System.Collections.IEnumerator AttachCameraToPlayer()
+    {
+        if (cameraTransform == null || playerTransform == null)
+        {
+            yield break;
+        }
+
+        isAttaching = true;
+        if (transitionPostProcess != null)
+        {
+            transitionPostProcess.enabled = true;
+        }
+
+        if (transitionAudioSource != null)
+        {
+            if (crtOffClip != null)
+            {
+                transitionAudioSource.PlayOneShot(crtOffClip);
+            }
+
+            if (staticNoiseClip != null)
+            {
+                if (loopStaticDuringTransition)
+                {
+                    transitionAudioSource.clip = staticNoiseClip;
+                    transitionAudioSource.loop = true;
+                    transitionAudioSource.Play();
+                }
+                else
+                {
+                    transitionAudioSource.PlayOneShot(staticNoiseClip);
+                }
+            }
+        }
+
+        if (lockPlayerMovementDuringAttach && playerMovement != null)
+        {
+            playerMovement.enabled = false;
+        }
+
+        float transitionDelay = Mathf.Clamp(Random.Range(preTransitionDelayRange.x, preTransitionDelayRange.y), 0f, preTransitionDelayRange.y);
+        float shakeElapsed = 0f;
+        while (shakeElapsed < transitionDelay)
+        {
+            float shakeStrength = Mathf.Lerp(transitionShakeStartStrength, 0f, Mathf.Clamp01(shakeElapsed / Mathf.Max(0.01f, transitionShakeDuration)));
+            Vector3 shakeOffset = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0f) * shakeStrength;
+            cameraTransform.position = cameraTransform.position + shakeOffset;
+            shakeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        Vector3 startPos = cameraTransform.position;
+        Quaternion startRot = cameraTransform.rotation;
+        Vector3 targetPos = playerTransform.TransformPoint(cameraDefaultLocalPos);
+        Quaternion targetRot = playerTransform.rotation * cameraDefaultLocalRot;
+        float elapsed = 0f;
+
+        while (elapsed < attachDuration)
+        {
+            float t = Mathf.Clamp01(elapsed / Mathf.Max(0.01f, attachDuration));
+            float totalShakeElapsed = shakeElapsed + elapsed;
+            float shakeStrength = Mathf.Lerp(transitionShakeStartStrength, 0f, Mathf.Clamp01(totalShakeElapsed / Mathf.Max(0.01f, transitionShakeDuration)));
+            Vector3 shakeOffset = Vector3.zero;
+            if (totalShakeElapsed <= transitionShakeDuration)
+            {
+                shakeOffset = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0f) * shakeStrength;
+            }
+            cameraTransform.position = Vector3.Lerp(startPos, targetPos, t) + shakeOffset;
+            cameraTransform.rotation = Quaternion.Slerp(startRot, targetRot, t);
+            if (cachedCamera != null && useTransitionFov)
+            {
+                cachedCamera.fieldOfView = Mathf.Lerp(transitionFov, baseFov, t);
+            }
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        cameraTransform.SetParent(playerTransform);
+        cameraTransform.localPosition = cameraDefaultLocalPos;
+        cameraTransform.localRotation = cameraDefaultLocalRot;
+        isAttached = true;
+        isAttaching = false;
+
+        if (cachedCamera != null)
+        {
+            cachedCamera.fieldOfView = baseFov;
+        }
+
+        if (transitionPostProcess != null)
+        {
+            transitionPostProcess.enabled = false;
+        }
+
+        if (transitionAudioSource != null && loopStaticDuringTransition && transitionAudioSource.clip == staticNoiseClip)
+        {
+            transitionAudioSource.Stop();
+            transitionAudioSource.clip = null;
+            transitionAudioSource.loop = false;
+        }
+
+        if (lockPlayerMovementDuringAttach && playerMovement != null)
+        {
+            playerMovement.enabled = true;
+        }
     }
 
     void UpdateLook()
