@@ -256,4 +256,3 @@ public class PlayerMovement : MonoBehaviour
         GUI.Label(new Rect(67f, 56f, 210f, 20f), staminaState, stateStyle);
     }
 }
-
