@@ -15,12 +15,18 @@ namespace SojaExiles
 		void Start()
 		{
 			open = false;
+           if (!Player)
+			{
+				GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+				if (playerObject)
+					Player = playerObject.transform;
+			}
 		}
 
 		void OnMouseOver()
 		{
 			{
-				if (Player)
+             if (Player && Player.CompareTag("Player"))
 				{
 					float dist = Vector3.Distance(Player.position, transform.position);
 					if (dist < 15)
