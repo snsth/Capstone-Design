@@ -1,4 +1,7 @@
 using UnityEngine;
+using System;
+using Random = UnityEngine.Random;
+
 public class PlayerCameraMovement : MonoBehaviour
 {
     public Transform playerTransform;
@@ -44,6 +47,7 @@ public class PlayerCameraMovement : MonoBehaviour
     public float movementBlendLerpSpeed = 14f;
     public float bobVariationStrength = 0.35f;
     public float bobVariationFrequency = 2.15f;
+    public event Action OnCameraAttached;
 
     float pitch;
     float bobTimer;
@@ -230,6 +234,7 @@ public class PlayerCameraMovement : MonoBehaviour
         isAttached = true;
         isAttaching = false;
 
+        OnCameraAttached?.Invoke();
         if (cachedCamera != null)
         {
             cachedCamera.fieldOfView = baseFov;
