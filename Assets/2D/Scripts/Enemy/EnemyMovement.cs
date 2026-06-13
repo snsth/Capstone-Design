@@ -48,6 +48,7 @@ public class EnemyMovement : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (Gamemanager.instance.isLive == false) return;
         // 사망 상태면 이동 처리 생략
         if (!isLive || anim.GetCurrentAnimatorStateInfo(0).IsTag("Hit"))
             return;
@@ -95,11 +96,12 @@ public class EnemyMovement : MonoBehaviour
         rigid.MovePosition(rigid.position + nextVector);
 
         // 관성 제거: MovePosition 후 남아있는 물리 속도를 0으로 초기화
-        rigid.linearVelocity = Vector2.zero;
+        rigid.velocity = Vector2.zero;
     }
 
     void LateUpdate()
     {
+        if (Gamemanager.instance.isLive == false) return;
         // 사망 상태면 반전 처리 생략
         if (!isLive)
             return;

@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public float speed;
     public Scanner  scanner;
-    
+    public Hand[] hands;
     
     Rigidbody2D rigid;       // 물리 이동에 사용하는 Rigidbody2D 컴포넌트
     SpriteRenderer spriter;  // 좌우 반전 처리에 사용하는 SpriteRenderer 컴포넌트
@@ -31,10 +31,12 @@ public class PlayerController : MonoBehaviour
         spriter = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
         scanner=GetComponent<Scanner>();
+        //hands=GetComponentsInChildren<Hand>(true);
     }
 
     void Update()
     {
+        if (Gamemanager.instance.isLive == false) return;
         // GetAxisRaw: -1, 0, 1 의 정수값만 반환 → 대각선 이동 시 normalized 처리 전 원본 입력
         inputVector.x = Input.GetAxisRaw("Horizontal");
         inputVector.y = Input.GetAxisRaw("Vertical");
@@ -42,6 +44,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (Gamemanager.instance.isLive == false) return;
         // 대각선 이동 시 속도가 빨라지지 않도록 normalized로 방향 벡터 정규화
         // fixedDeltaTime을 곱해 프레임레이트와 무관한 일정한 속도 유지
         Vector2 nextVector = inputVector.normalized * Time.fixedDeltaTime * speed;
@@ -50,6 +53,7 @@ public class PlayerController : MonoBehaviour
 
     void LateUpdate()
     {
+        if (Gamemanager.instance.isLive == false) return;
         // Speed: 입력이 없으면 0, 있으면 1 이상 → Idle/Walk 애니메이션 전환에 사용
         anim.SetFloat("Speed", inputVector.magnitude);
 

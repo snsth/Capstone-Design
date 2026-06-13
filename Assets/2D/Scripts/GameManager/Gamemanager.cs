@@ -16,8 +16,11 @@ public class Gamemanager : MonoBehaviour
     [Header("# Game Control")]
     public float gameTime;
     public float maxGameTime = 4 * 10f;
-    
-    [Header("# Player Info")]
+    public bool isLive;
+
+    [Header("# Player Info")] 
+    public int health;
+    public int maxHealth;
     public int level;
     public int kill;
     public int exp;
@@ -28,6 +31,7 @@ public class Gamemanager : MonoBehaviour
     /// </summary>
     [Header("# Game Object Info")]
     public PlayerController player;
+    public LevelUp uilevelUp;
 
     /// <summary>
     /// 오브젝트 풀 매니저 참조. 적 스폰 등 풀에서 오브젝트를 꺼낼 때 사용.
@@ -39,10 +43,17 @@ public class Gamemanager : MonoBehaviour
         // 싱글톤 초기화: 이 오브젝트를 전역 인스턴스로 등록
         instance = this;
     }
+
+    void Start()
+    {
+        health = maxHealth;
+        // 임시
+        uilevelUp.Select(0);
+    }
     
     void Update()
     {
-        
+        if (!isLive) return;
         gameTime += Time.deltaTime;
 
         
@@ -55,11 +66,23 @@ public class Gamemanager : MonoBehaviour
     public void GetExp()
     {
         exp++;
-        if (exp == nextExp[level])
+        if (exp == nextExp[Mathf.Min(level, nextExp.Length - 1)])
         {
             level++;
             exp = 0;
-            
+            uilevelUp.Show();
         }
+    }
+
+    public void Stop()
+    {
+        isLive = false;
+        Time.timeScale =0f;
+    }
+
+    public void Resume()
+    {
+        isLive = true;
+        Time.timeScale =1f;
     }
 }
