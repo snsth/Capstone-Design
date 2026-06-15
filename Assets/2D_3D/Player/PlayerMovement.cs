@@ -11,6 +11,13 @@ public class PlayerMovement : MonoBehaviour
     public float deceleration = 12f;
     public float gravity = -15f;
 
+    [Header("Footsteps")]
+    public AudioSource footstepAudioSource;
+    public AudioClip[] footstepClips;
+
+    public float walkStepInterval = 0.55f;
+    public float sprintStepInterval = 0.35f;
+
     public float standingHeight = 1.8f;
     public float crouchHeight = 1.25f;
     public float crouchTransitionSpeed = 12f;
@@ -35,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
     Vector3 velocity;
     Vector3 horizontalVelocity;
 
+    float footstepTimer;
     bool isGrounded;
     bool isSprinting;
     bool isCrouching;
@@ -157,6 +165,50 @@ public class PlayerMovement : MonoBehaviour
         velocity.y += gravity * Time.deltaTime;
 
         controller.Move(Vector3.up * velocity.y * Time.deltaTime);
+
+        HandleFootsteps();
+    }
+
+    void HandleFootsteps()
+    {
+        if (!isGrounded)
+        {
+            footstepTimer = 0f;
+            return;
+        }
+
+        bool isMoving = CurrentHorizontalSpeed > 0.2f;
+
+        if (!isMoving)
+        {
+            footstepTimer = 0f;
+            return;
+        }
+
+        float interval = isSprinting
+            ? sprintStepInterval
+            : walkStepInterval;
+
+        footstepTimer += Time.deltaTime;
+
+        if (footstepTimer >= interval)
+        {
+            PlayFootstep();
+            footstepTimer = 0f;
+        }
+    }
+
+    void PlayFootstep()
+    {
+        if (footstepAudioSource == null)
+            return;
+
+        if (footstepClips == null || footstepClips.Length == 0)
+            return;
+
+        int index = Random.Range(0, footstepClips.Length);
+
+        footstepAudioSource.PlayOneShot(footstepClips[index]);
     }
 
     bool CanStandUp()

@@ -125,6 +125,14 @@ public class PlayerCameraMovement : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
+
+        if (transitionAudioSource != null && staticNoiseClip != null)
+        {
+            transitionAudioSource.clip = staticNoiseClip;
+            transitionAudioSource.loop = true;
+            transitionAudioSource.Play();
+        }
+
     }
 
     void LateUpdate()
@@ -171,19 +179,19 @@ public class PlayerCameraMovement : MonoBehaviour
                 transitionAudioSource.PlayOneShot(crtOffClip);
             }
 
-            if (staticNoiseClip != null)
-            {
-                if (loopStaticDuringTransition)
-                {
-                    transitionAudioSource.clip = staticNoiseClip;
-                    transitionAudioSource.loop = true;
-                    transitionAudioSource.Play();
-                }
-                else
-                {
-                    transitionAudioSource.PlayOneShot(staticNoiseClip);
-                }
-            }
+            //if (staticNoiseClip != null)
+            //{
+            //    if (loopStaticDuringTransition)
+            //    {
+            //        transitionAudioSource.clip = staticNoiseClip;
+            //        transitionAudioSource.loop = true;
+            //        transitionAudioSource.Play();
+            //    }
+            //    else
+            //    {
+            //        transitionAudioSource.PlayOneShot(staticNoiseClip);
+            //    }
+            //}
         }
 
         if (lockPlayerMovementDuringAttach && playerMovement != null)
