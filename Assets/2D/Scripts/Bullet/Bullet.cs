@@ -24,7 +24,7 @@ public class Bullet : MonoBehaviour
         // per == -1은 근접 회전 무기(무한 관통)이므로 velocity와 Invoke 모두 불필요.
         if (per > -1)
         {
-            rigid.velocity = direction * 15f;
+            rigid.linearVelocity = direction * 15f;
 
             // 적에 맞지 않고 맵 밖으로 나간 불릿을 5초 후 자동 회수한다.
             // Destroy 대신 SetActive(false)를 사용하는 이유:
@@ -41,7 +41,7 @@ public class Bullet : MonoBehaviour
     // velocity를 먼저 0으로 초기화해 비활성화 직전 관성이 남지 않도록 한다.
     void DeactivateBullet()
     {
-        rigid.velocity = Vector2.zero;
+        rigid.linearVelocity = Vector2.zero;
         gameObject.SetActive(false);
     }
 
@@ -68,7 +68,7 @@ public class Bullet : MonoBehaviour
 
         if (per == -1)
         {
-            rigid.velocity = Vector2.zero;
+            rigid.linearVelocity = Vector2.zero;
             gameObject.SetActive(false); // → OnDisable 호출 → CancelInvoke로 타이머 정리
         }
 
