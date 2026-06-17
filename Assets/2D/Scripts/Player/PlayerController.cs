@@ -74,4 +74,25 @@ public class PlayerController : MonoBehaviour
             spriter.flipX = inputVector.x < 0;
         }
     }
+
+    void OnCollisionStay2D(Collision2D collision)
+    {
+        if(!Gamemanager.instance.isLive) return;
+
+        Gamemanager.instance.health -= Time.deltaTime * 10f;
+
+        if(Gamemanager.instance.health < 0)
+        {
+            Gamemanager.instance.health = 0;
+            Gamemanager.instance.isLive = false;
+
+            for(int index = 2; index < transform.childCount; index++)
+            {
+                transform.GetChild(index).gameObject.SetActive(false);
+            }
+
+            anim.SetTrigger("Dead");
+            Gamemanager.instance.GameOver();
+        }
+    }
 }

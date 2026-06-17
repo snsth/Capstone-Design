@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 /// <summary>
 /// 게임 전체를 관리하는 싱글톤 매니저.
 /// 씬 어디서든 Gamemanager.instance 로 접근하여 플레이어, 풀 매니저 등 핵심 참조를 가져올 수 있다.
@@ -19,8 +19,8 @@ public class Gamemanager : MonoBehaviour
     public bool isLive;
 
     [Header("# Player Info")] 
-    public int health;
-    public int maxHealth;
+    public float health;
+    public float maxHealth;
     public int level;
     public int kill;
     public int exp;
@@ -32,25 +32,61 @@ public class Gamemanager : MonoBehaviour
     [Header("# Game Object Info")]
     public PlayerController player;
     public LevelUp uilevelUp;
-
+    public Result UIResult;
     /// <summary>
     /// 오브젝트 풀 매니저 참조. 적 스폰 등 풀에서 오브젝트를 꺼낼 때 사용.
     /// </summary>
     public PoolManager pool;
-
+    public GameObject enemyCleaner;
     void Awake()
     {
         // 싱글톤 초기화: 이 오브젝트를 전역 인스턴스로 등록
         instance = this;
     }
 
-    void Start()
+    public void GameStart()
     {
         health = maxHealth;
         // 임시
         uilevelUp.Select(0);
+        Resume();
     }
-    
+    public void GameOver()
+    {
+        StartCoroutine(GameOverRoutine());
+    }
+
+    IEnumerator GameOverRoutine()
+    {
+        isLive = false;
+
+        yield return new WaitForSeconds(0.5f);
+        
+        UIResult.gameObject.SetActive(true);
+        UIResult.Lose();
+        Stop();
+    }
+
+     public void GameVictory()
+    {
+        StartCoroutine(GameVictoryRoutine());
+    }
+
+    IEnumerator GameVictoryRoutine()
+    {
+        isLive = false;
+        enemyCleaner.SetActive(true);
+
+        yield return new WaitForSeconds(0.5f);
+        
+        UIResult.gameObject.SetActive(true);
+        UIResult.Win();
+        Stop();
+    }
+    public void GameRetry()
+    {
+        SceneManager.LoadScene(0);
+    }
     void Update()
     {
         if (!isLive) return;
@@ -60,11 +96,13 @@ public class Gamemanager : MonoBehaviour
         if (gameTime > maxGameTime)
         {
             gameTime = maxGameTime;
+            GameVictory();
         }
     }
 
     public void GetExp()
     {
+        if(isLive == false) return;
         exp++;
         if (exp == nextExp[Mathf.Min(level, nextExp.Length - 1)])
         {
