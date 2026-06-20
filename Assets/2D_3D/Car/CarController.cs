@@ -115,6 +115,11 @@ public class CarController : MonoBehaviour
             if (RRWTireSkid != null) RRWTireSkid.emitting = false;
         }
 
+        if (useSounds && carEngineSound != null)
+        {
+            carEngineSound.loop = true;
+            carEngineSound.Play();
+        }
         originalMaxSpeed = maxSpeed;
     }
 

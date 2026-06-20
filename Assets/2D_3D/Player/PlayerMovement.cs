@@ -15,6 +15,9 @@ public class PlayerMovement : MonoBehaviour
     public AudioSource footstepAudioSource;
     public AudioClip[] footstepClips;
 
+    [Header("Stamina")]
+    public bool staminaEnabled = false;
+
     public float walkStepInterval = 0.55f;
     public float sprintStepInterval = 0.35f;
 
@@ -105,40 +108,43 @@ public class PlayerMovement : MonoBehaviour
         }
 
         bool sprintHeld = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-        bool canSprint = currentStamina > 0f;
-        isSprinting = sprintHeld && isMoving && canSprint && !isCrouching;
+        bool canSprint = staminaEnabled && currentStamina > 0f;
 
-        if (isSprinting)
+        isSprinting = sprintHeld && isMoving && canSprint && !isCrouching;
+        if (staminaEnabled)
         {
-            currentStamina -= staminaDrainPerSecond * Time.deltaTime;
-            currentStamina = Mathf.Max(0f, currentStamina);
-            staminaRegenTimer = staminaRegenDelay;
-        }
-        else
-        {
-            if (staminaRegenTimer > 0f)
+            if (isSprinting)
             {
-                staminaRegenTimer -= Time.deltaTime;
+                currentStamina -= staminaDrainPerSecond * Time.deltaTime;
+                currentStamina = Mathf.Max(0f, currentStamina);
+                staminaRegenTimer = staminaRegenDelay;
             }
             else
             {
-                float regenMultiplier;
-                if (!isMoving)
+                if (staminaRegenTimer > 0f)
                 {
-                    regenMultiplier = staminaRegenIdleMultiplier;
-                }
-                else if (isCrouching)
-                {
-                    regenMultiplier = staminaRegenCrouchMultiplier;
+                    staminaRegenTimer -= Time.deltaTime;
                 }
                 else
                 {
-                    float speedRatio = Mathf.Clamp01(CurrentHorizontalSpeed / Mathf.Max(0.01f, maxSpeed));
-                    regenMultiplier = Mathf.Lerp(staminaRegenSlowMoveMultiplier, 1f, speedRatio);
-                }
+                    float regenMultiplier;
+                    if (!isMoving)
+                    {
+                        regenMultiplier = staminaRegenIdleMultiplier;
+                    }
+                    else if (isCrouching)
+                    {
+                        regenMultiplier = staminaRegenCrouchMultiplier;
+                    }
+                    else
+                    {
+                        float speedRatio = Mathf.Clamp01(CurrentHorizontalSpeed / Mathf.Max(0.01f, maxSpeed));
+                        regenMultiplier = Mathf.Lerp(staminaRegenSlowMoveMultiplier, 1f, speedRatio);
+                    }
 
-                currentStamina += staminaRegenPerSecond * regenMultiplier * Time.deltaTime;
-                currentStamina = Mathf.Min(maxStamina, currentStamina);
+                    currentStamina += staminaRegenPerSecond * regenMultiplier * Time.deltaTime;
+                    currentStamina = Mathf.Min(maxStamina, currentStamina);
+                }
             }
         }
 
@@ -167,6 +173,12 @@ public class PlayerMovement : MonoBehaviour
         controller.Move(Vector3.up * velocity.y * Time.deltaTime);
 
         HandleFootsteps();
+    }
+
+    public void EnableStamina()
+    {
+        staminaEnabled = true;
+        currentStamina = maxStamina;
     }
 
     void HandleFootsteps()
@@ -253,7 +265,7 @@ public class PlayerMovement : MonoBehaviour
 
     void OnGUI()
     {
-        if (!showStaminaDebug)
+        if (!showStaminaDebug || !staminaEnabled)
         {
             return;
         }
@@ -301,7 +313,7 @@ public class PlayerMovement : MonoBehaviour
         GUIStyle stateStyle = new GUIStyle(GUI.skin.label);
         stateStyle.normal.textColor = stateColor;
 
-        GUI.Box(new Rect(12f, 12f, 280f, 70f), "Stamina Debug");
+        GUI.Box(new Rect(12f, 12f, 280f, 70f), "Stamina (Shift to Sprint)");
         GUI.Label(new Rect(22f, 36f, 70f, 20f), "Stamina:", labelStyle);
         GUI.Label(new Rect(92f, 36f, 190f, 20f), $"{currentStamina:0.0} / {maxStamina:0.0}", valueStyle);
         GUI.Label(new Rect(22f, 56f, 45f, 20f), "State:", labelStyle);

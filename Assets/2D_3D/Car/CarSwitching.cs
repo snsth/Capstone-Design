@@ -7,10 +7,32 @@ public class CarSwitching : MonoBehaviour
     [SerializeField] private GameObject carInterior;
     [SerializeField] private GameObject[] prefabsToDisable;
 
-    private void OnTriggerEnter(Collider other)
+    [Header("UI")]
+    [SerializeField] private GameObject enterCarText;
+
+    private bool playerInRange;
+    private bool hasEnteredCar;
+
+    private void Start()
     {
-        if (!other.CompareTag("Player"))
+        if (enterCarText != null)
+            enterCarText.SetActive(false);
+    }
+
+    private void Update()
+    {
+        if (!playerInRange || hasEnteredCar)
             return;
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            EnterCar();
+        }
+    }
+
+    private void EnterCar()
+    {
+        hasEnteredCar = true;
 
         if (player)
             player.SetActive(false);
@@ -29,5 +51,33 @@ public class CarSwitching : MonoBehaviour
                     prefab.SetActive(false);
             }
         }
+
+        if (enterCarText)
+            enterCarText.SetActive(false);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!other.CompareTag("Player"))
+            return;
+
+        if (hasEnteredCar)
+            return;
+
+        playerInRange = true;
+
+        if (enterCarText)
+            enterCarText.SetActive(true);
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (!other.CompareTag("Player"))
+            return;
+
+        playerInRange = false;
+
+        if (enterCarText)
+            enterCarText.SetActive(false);
     }
 }
