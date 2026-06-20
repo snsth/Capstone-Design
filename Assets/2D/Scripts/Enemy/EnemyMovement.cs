@@ -150,6 +150,7 @@ public class EnemyMovement : MonoBehaviour
         {
             if (HasParameter("Hit"))
                 anim.SetTrigger("Hit");
+                AudioManager.instance.PlaySfx(AudioManager.SFX.Hit);
         }
         else
         {
@@ -160,7 +161,9 @@ public class EnemyMovement : MonoBehaviour
             anim.SetBool("Dead",true);
             Gamemanager.instance.kill++;
             Gamemanager.instance.GetExp();
-
+            
+            if(Gamemanager.instance.isLive)
+                AudioManager.instance.PlaySfx(AudioManager.SFX.Dead);
         }
         
     }

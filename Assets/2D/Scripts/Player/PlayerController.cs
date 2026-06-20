@@ -34,6 +34,26 @@ public class PlayerController : MonoBehaviour
         //hands=GetComponentsInChildren<Hand>(true);
     }
 
+    void Start()
+    {
+        // Area 크기 = max(카메라 뷰 + 여유, 타일 그리드 전체 스팬)
+        // 타일 그리드: 4×4 배치(간격 20), 스팬 80×80
+        // - 카메라보다 작으면 빈 화면 노출
+        // - 타일 그리드(80)보다 작으면 외곽 타일이 Area 밖에서 시작해 OnTriggerExit가 발동 안 됨
+        // - jump(80)보다 Area_half가 너무 작으면 재배치 후 즉시 Area 밖에 착지해 연쇄 이동 발생
+        Camera cam = Camera.main;
+        float camHeight = cam.orthographicSize * 2f;
+        float camWidth = camHeight * cam.aspect;
+
+        Transform area = transform.Find("Area");
+        if (area != null)
+        {
+            float areaW = Mathf.Max(camWidth + 20f, 84f);
+            float areaH = Mathf.Max(camHeight + 20f, 84f);
+            area.GetComponent<BoxCollider2D>().size = new Vector2(areaW, areaH);
+        }
+    }
+
     void Update()
     {
         if (Gamemanager.instance.isLive == false) return;

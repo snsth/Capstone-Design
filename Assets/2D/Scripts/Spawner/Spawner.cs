@@ -15,7 +15,7 @@ public class Spawner : MonoBehaviour
     /// </summary>
     public Transform[] spawnPoints;
     public SpawnData[]  spawnData;
-
+    public float levelTime;
     /// <summary>
     /// 스폰 간격을 측정하기 위한 타이머 (초 단위).
     /// </summary>
@@ -29,13 +29,14 @@ public class Spawner : MonoBehaviour
         // 이 오브젝트의 모든 자식 Transform을 스폰 포인트로 등록
         // 인덱스 0은 자기 자신(부모)이므로 Spawn()에서 1부터 사용
         spawnPoints = GetComponentsInChildren<Transform>();
+        levelTime = Gamemanager.instance.maxGameTime / spawnData.Length;
     }
 
     void Update()
     {
         if (Gamemanager.instance.isLive == false) return;
         timer += Time.deltaTime;
-        level = Mathf.Min(Mathf.FloorToInt(Gamemanager.instance.gameTime / 10f), spawnData.Length - 1);
+        level = Mathf.Min(Mathf.FloorToInt(Gamemanager.instance.gameTime / levelTime), spawnData.Length - 1);
 
         // 0.5초마다 적 스폰
         if (timer > (spawnData[level].spawnTime))

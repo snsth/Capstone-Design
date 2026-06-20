@@ -34,28 +34,25 @@ public class Reposition : MonoBehaviour
         Vector3 myPos = transform.position;
 
         // 플레이어와 이 오브젝트 간의 X, Y 거리 차이 계산
-        float differnetX = Mathf.Abs(playerPos.x - myPos.x);
-        float differnetY = Mathf.Abs(playerPos.y - myPos.y);
-
-        // 플레이어의 현재 입력 방향 벡터
-        Vector3 playerDir = Gamemanager.instance.player.inputVector;
-
-        // 각 축의 이동 방향 부호 (-1 또는 1)
-        float dirX = playerDir.x < 0 ? -1 : 1;
-        float dirY = playerDir.y < 0 ? -1 : 1;
+       
 
         switch (transform.tag)
         {
             case "Ground":
-                // X축으로 더 많이 벗어났다면 X방향으로 재배치, Y축이면 Y방향으로 재배치
-                // 40유닛 = 타일 크기에 맞춰 한 칸 앞으로 이동
+                float differnetX = (playerPos.x - myPos.x);
+                float differnetY = (playerPos.y - myPos.y);
+                // 각 축의 이동 방향 부호 (-1 또는 1)
+                float dirX = differnetX < 0 ? -1 : 1;
+                float dirY = differnetY < 0 ? -1 : 1;
+                differnetX = Mathf.Abs(differnetX);
+                differnetY = Mathf.Abs(differnetY);
                 if (differnetX > differnetY)
                 {
-                    transform.Translate(Vector3.right * dirX * 40);
+                    transform.Translate(Vector3.right * dirX * 80);
                 }
                 else if (differnetY > differnetX)
                 {
-                    transform.Translate(Vector3.up * dirY * 40);
+                    transform.Translate(Vector3.up * dirY * 80);
                 }
                 break;
 
@@ -64,8 +61,9 @@ public class Reposition : MonoBehaviour
                 if (myCollider.enabled)
                 {
                     // 플레이어 위치 기준 절대 좌표로 재배치 (상대 이동 시 멀어진 적이 Area 밖에 머무는 버그 방지)
-                    Vector3 dir = playerDir.sqrMagnitude > 0 ? playerDir.normalized : Vector3.right;
-                    transform.position = playerPos + dir * 20f + new Vector3(Random.Range(-3f, 3f), Random.Range(-3f, 3f), 0f);
+                    Vector3 dist = playerPos - myPos;
+                    Vector3 ran = new Vector3(Random.Range(-3f, 3f), Random.Range(-3f, 3f), 0); 
+                    transform.Translate(ran+ dist*2);
                 }
                 break;
         }

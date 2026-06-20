@@ -20,18 +20,12 @@ public class Bullet : MonoBehaviour
         this.damage = damage;
         this.per = per;
 
-        // per > -1 : 원거리 발사 불릿에만 속도와 수명 타이머를 적용한다.
-        // per == -1은 근접 회전 무기(무한 관통)이므로 velocity와 Invoke 모두 불필요.
-        if (per > -1)
+        
+        if (per >= 0)
         {
             rigid.linearVelocity = direction * 15f;
 
-            // 적에 맞지 않고 맵 밖으로 나간 불릿을 5초 후 자동 회수한다.
-            // Destroy 대신 SetActive(false)를 사용하는 이유:
-            //   - 이 프로젝트는 오브젝트 풀링을 사용하므로 오브젝트를 파괴하면
-            //     풀에서 재사용할 수 없어 매번 새로 생성해야 한다.
-            //   - SetActive(false)로 비활성화하면 풀이 나중에 꺼내 재사용할 수 있어
-            //     메모리 할당/GC 비용을 줄일 수 있다.
+            
             Invoke("DeactivateBullet", 5f);
         }
 
@@ -57,7 +51,7 @@ public class Bullet : MonoBehaviour
     {
         // Enemy 태그가 아닌 충돌(벽, 플레이어 등)은 무시한다.
         // per == -1인 근접 회전 무기는 충돌해도 사라지지 않아야 하므로 함께 무시한다.
-        if (!collision.CompareTag("Enemy") || per == -1)
+        if (!collision.CompareTag("Enemy") || per == -100)
         {
             return;
         }
@@ -66,7 +60,7 @@ public class Bullet : MonoBehaviour
         // per = 0으로 초기화된 일반 불릿은 이 시점에서 -1이 되어 바로 사라진다.
         per--;
 
-        if (per == -1)
+        if (per < 0)
         {
             rigid.linearVelocity = Vector2.zero;
             gameObject.SetActive(false); // → OnDisable 호출 → CancelInvoke로 타이머 정리
