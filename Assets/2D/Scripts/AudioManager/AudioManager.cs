@@ -23,7 +23,12 @@ public class AudioManager : MonoBehaviour
     AudioSource[] sfxPlayers;
     int channelIndex;
 
-    public enum SFX { Dead, Hit, LevelUp = 3, Lose, Melee, Range = 7, Select, Win }
+    public enum SFX
+    {
+        Dead, Hit, LevelUp = 3, Lose, Melee, Range = 7, Select, Win,
+        // 공포 이벤트용 SFX (sfxClips 배열 9·10·11 슬롯에 클립 할당)
+        HorrorNoise = 9, HorrorStatic = 10, HorrorJumpscare = 11
+    }
 
     void Awake()
     {

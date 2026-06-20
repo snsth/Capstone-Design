@@ -55,6 +55,26 @@ public class Spawner : MonoBehaviour
             enemy.GetComponent<EnemyMovement>().Init(spawnData[level]);
         }
     }
+
+    // 공포 이벤트: 지정한 수만큼 빠른 적을 한꺼번에 쏟아냄
+    public void SpawnHorrorWave(int count, float speedOverride)
+    {
+        SpawnData horrorData = new SpawnData
+        {
+            spriteType = spawnData[level].spriteType,
+            spawnTime  = 0,
+            spawnCount = 1,
+            health     = spawnData[level].health,
+            speed      = speedOverride
+        };
+
+        for (int i = 0; i < count; i++)
+        {
+            GameObject enemy = Gamemanager.instance.pool.Get(0);
+            enemy.transform.position = spawnPoints[Random.Range(1, spawnPoints.Length)].position;
+            enemy.GetComponent<EnemyMovement>().Init(horrorData);
+        }
+    }
 }
 [System.Serializable]
 public class SpawnData
