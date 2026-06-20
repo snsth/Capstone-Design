@@ -50,6 +50,9 @@ public class Gamemanager : MonoBehaviour
         // 임시
         uilevelUp.Select(0);
         Resume();
+
+        AudioManager.instance.PlaySfx(AudioManager.SFX.Select);
+        AudioManager.instance.PlayBgm(true);
     }
     public void GameOver()
     {
@@ -65,6 +68,8 @@ public class Gamemanager : MonoBehaviour
         UIResult.gameObject.SetActive(true);
         UIResult.Lose();
         Stop();
+        AudioManager.instance.PlayBgm(false);
+        AudioManager.instance.PlaySfx(AudioManager.SFX.Lose);
     }
 
      public void GameVictory()
@@ -82,6 +87,8 @@ public class Gamemanager : MonoBehaviour
         UIResult.gameObject.SetActive(true);
         UIResult.Win();
         Stop();
+        AudioManager.instance.PlayBgm(false);
+        AudioManager.instance.PlaySfx(AudioManager.SFX.Win);
     }
     public void GameRetry()
     {

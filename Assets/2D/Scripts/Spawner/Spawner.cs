@@ -15,7 +15,7 @@ public class Spawner : MonoBehaviour
     /// </summary>
     public Transform[] spawnPoints;
     public SpawnData[]  spawnData;
-
+    public float levelTime;
     /// <summary>
     /// 스폰 간격을 측정하기 위한 타이머 (초 단위).
     /// </summary>
@@ -29,13 +29,14 @@ public class Spawner : MonoBehaviour
         // 이 오브젝트의 모든 자식 Transform을 스폰 포인트로 등록
         // 인덱스 0은 자기 자신(부모)이므로 Spawn()에서 1부터 사용
         spawnPoints = GetComponentsInChildren<Transform>();
+        levelTime = Gamemanager.instance.maxGameTime / spawnData.Length;
     }
 
     void Update()
     {
         if (Gamemanager.instance.isLive == false) return;
         timer += Time.deltaTime;
-        level = Mathf.Min(Mathf.FloorToInt(Gamemanager.instance.gameTime / 10f), spawnData.Length - 1);
+        level = Mathf.Min(Mathf.FloorToInt(Gamemanager.instance.gameTime / levelTime), spawnData.Length - 1);
 
         // 0.5초마다 적 스폰
         if (timer > (spawnData[level].spawnTime))
@@ -52,6 +53,26 @@ public class Spawner : MonoBehaviour
             GameObject enemy = Gamemanager.instance.pool.Get(0);
             enemy.transform.position = spawnPoints[Random.Range(1, spawnPoints.Length)].position;
             enemy.GetComponent<EnemyMovement>().Init(spawnData[level]);
+        }
+    }
+
+    // 공포 이벤트: 지정한 수만큼 빠른 적을 한꺼번에 쏟아냄
+    public void SpawnHorrorWave(int count, float speedOverride)
+    {
+        SpawnData horrorData = new SpawnData
+        {
+            spriteType = spawnData[level].spriteType,
+            spawnTime  = 0,
+            spawnCount = 1,
+            health     = spawnData[level].health,
+            speed      = speedOverride
+        };
+
+        for (int i = 0; i < count; i++)
+        {
+            GameObject enemy = Gamemanager.instance.pool.Get(0);
+            enemy.transform.position = spawnPoints[Random.Range(1, spawnPoints.Length)].position;
+            enemy.GetComponent<EnemyMovement>().Init(horrorData);
         }
     }
 }
