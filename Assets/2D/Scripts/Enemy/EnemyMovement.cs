@@ -28,7 +28,10 @@ public class EnemyMovement : MonoBehaviour
     /// <summary>
     /// 적의 생존 여부. false이면 이동과 반전 처리를 모두 중단한다.
     /// </summary>
-    bool isLive; // 테스트용 true
+    bool isLive;
+
+    // 공포 이벤트: true이면 모든 적이 일제히 정지
+    public static bool isFrozen = false;
 
     Rigidbody2D rigid; // 물리 이동에 사용하는 Rigidbody2D 컴포넌트
     Collider2D coll;
@@ -52,6 +55,9 @@ public class EnemyMovement : MonoBehaviour
         // 사망 상태면 이동 처리 생략
         if (!isLive || anim.GetCurrentAnimatorStateInfo(0).IsTag("Hit"))
             return;
+
+        // 공포 이벤트: 전체 동결 중이면 이동 중단
+        if (isFrozen) return;
 
         // 적 → 플레이어 방향 벡터 (크기 = 현재 거리)
         Vector2 direction = target.position - rigid.position;
