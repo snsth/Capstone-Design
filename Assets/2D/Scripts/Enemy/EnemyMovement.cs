@@ -96,7 +96,7 @@ public class EnemyMovement : MonoBehaviour
         rigid.MovePosition(rigid.position + nextVector);
 
         // 관성 제거: MovePosition 후 남아있는 물리 속도를 0으로 초기화
-        rigid.velocity = Vector2.zero;
+        rigid.linearVelocity = Vector2.zero;
     }
 
     void LateUpdate()
