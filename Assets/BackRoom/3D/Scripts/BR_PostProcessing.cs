@@ -31,6 +31,7 @@ public class BR_PostProcessing : MonoBehaviour
     LensDistortion       lensDist;
 
     Coroutine deathRoutine;
+    bool chaseActive;
 
     void Awake()
     {
@@ -79,7 +80,7 @@ public class BR_PostProcessing : MonoBehaviour
 
     public void ResetToBase() => ApplyBase();
 
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode) => ApplyBase();
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode) { chaseActive = false; ApplyBase(); }
 
     // 추격씬 — 화면을 붉게 물들임
     public void TriggerChaseEffect(float fadeDuration = 1.5f)
@@ -96,6 +97,7 @@ public class BR_PostProcessing : MonoBehaviour
     // 산소량에 따라 화면 어둡게 (ratio 1=정상, 0=완전 암전)
     public void SetOxygenDim(float ratio)
     {
+        if (chaseActive) return; // 추격씬 효과가 우선
         if (ratio >= 1f)
         {
             colorAdj.active = false;
@@ -111,19 +113,27 @@ public class BR_PostProcessing : MonoBehaviour
 
     IEnumerator ChaseRoutine(float dur)
     {
+        chaseActive      = true;
         colorAdj.active  = true;
         vignette.active  = true;
         filmGrain.active = true;
+        filmGrain.type.Override(FilmGrainLookup.Thin1);
+
+        // 첫 프레임에 즉시 반영되도록 초기값 설정
+        colorAdj.colorFilter.Override(Color.white);
+        colorAdj.postExposure.Override(0f);
+        vignette.intensity.Override(0f);
+        filmGrain.intensity.Override(0f);
 
         float t = 0f;
         while (t < dur)
         {
             t += Time.deltaTime;
             float p = Mathf.Clamp01(t / dur);
-            colorAdj.colorFilter.Override(Color.Lerp(Color.white, new Color(0.85f, 0.1f, 0.1f), p));
-            colorAdj.postExposure.Override(Mathf.Lerp(0f, -0.6f, p));
-            vignette.intensity.Override(Mathf.Lerp(0f, 0.45f, p));
-            filmGrain.intensity.Override(Mathf.Lerp(0f, 0.25f, p));
+            colorAdj.colorFilter.Override(Color.Lerp(Color.white, new Color(1f, 0.04f, 0.04f), p));
+            colorAdj.postExposure.Override(Mathf.Lerp(0f, -1.0f, p));
+            vignette.intensity.Override(Mathf.Lerp(0f, 0.55f, p));
+            filmGrain.intensity.Override(Mathf.Lerp(0f, 0.35f, p));
             yield return null;
         }
     }
