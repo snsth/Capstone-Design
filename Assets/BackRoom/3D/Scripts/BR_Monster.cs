@@ -27,8 +27,13 @@ public class BR_Monster : MonoBehaviour
     Camera playerCam;
     bool caught;
 
+    // 여러 몬스터가 동시에 킬을 트리거하는 것을 막는 전역 플래그
+    static bool anyKilling = false;
+
     void Start()
     {
+        anyKilling = false; // 씬 재시작 시 정적 플래그 초기화
+
         agent = GetComponent<NavMeshAgent>();
         agent.speed = moveSpeed;
         agent.angularSpeed = 720f;
@@ -61,21 +66,15 @@ public class BR_Monster : MonoBehaviour
                 agent.isStopped = true;
                 agent.velocity = Vector3.zero;
             }
-            // 애니메이터 속도 0 = 현재 프레임에서 즉시 동결
             if (animator != null) animator.speed = 0f;
         }
         else
         {
+            // NavMesh 이탈 상태에서는 벽 관통 이동 금지 — 그냥 멈춤
             if (agent.isOnNavMesh)
             {
                 agent.isStopped = false;
                 agent.SetDestination(player.position);
-            }
-            else
-            {
-                Vector3 dir = (player.position - transform.position).normalized;
-                transform.position += dir * moveSpeed * Time.deltaTime;
-                transform.LookAt(new Vector3(player.position.x, transform.position.y, player.position.z));
             }
             if (animator != null)
             {
@@ -84,9 +83,12 @@ public class BR_Monster : MonoBehaviour
             }
         }
 
-        if (!caught && Vector3.Distance(transform.position, player.position) <= killDistance)
+        // 동시 킬 방지: anyKilling이 true면 이 몬스터는 트리거 안 함
+        if (!caught && !anyKilling &&
+            Vector3.Distance(transform.position, player.position) <= killDistance)
         {
             caught = true;
+            anyKilling = true;
             StartCoroutine(KillPlayer());
         }
     }
@@ -97,16 +99,13 @@ public class BR_Monster : MonoBehaviour
 
         Vector3 monsterCenter = transform.position + Vector3.up * 1f;
 
-        // 1) 거리 체크
         float dist = Vector3.Distance(playerCamera.position, monsterCenter);
         if (dist > detectionRange) return false;
 
-        // 2) 뷰포트 체크 — 화면 밖이면 이동 가능
         Vector3 vp = playerCam.WorldToViewportPoint(monsterCenter);
         if (!(vp.z > 0f && vp.x >= 0f && vp.x <= 1f && vp.y >= 0f && vp.y <= 1f))
             return false;
 
-        // 3) 벽 감지 — 몬스터 직전까지 레이를 쏴서 뭔가 맞으면 벽 뒤 = 이동 가능
         Vector3 dir = (monsterCenter - playerCamera.position).normalized;
         RaycastHit[] hits = Physics.RaycastAll(playerCamera.position, dir,
             dist - 0.2f, ~0, QueryTriggerInteraction.Ignore);
@@ -114,15 +113,11 @@ public class BR_Monster : MonoBehaviour
 
         foreach (var hit in hits)
         {
-            // 플레이어 자신은 무시
             if (hit.transform == player || hit.transform.IsChildOf(player)) continue;
-            // 다른 몬스터도 무시 (몬스터끼리 서로 가리지 않도록)
             if (hit.transform.GetComponent<BR_Monster>() != null) continue;
-            // 그 외 충돌 = 벽 → 이동 가능
             return false;
         }
 
-        // 아무것도 막지 않음 = 시야 확보 → 정지
         return true;
     }
 
@@ -135,11 +130,19 @@ public class BR_Monster : MonoBehaviour
 
     IEnumerator KillPlayer()
     {
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.5f);
+
+        // 딜레이 동안 플레이어가 도망쳤으면 킬 취소
+        if (player == null || Vector3.Distance(transform.position, player.position) > killDistance * 2.5f)
+        {
+            caught = false;
+            anyKilling = false;
+            yield break;
+        }
+
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    // 씬 에디터에서 시야각 시각화
     void OnDrawGizmosSelected()
     {
         if (playerCamera == null) return;
