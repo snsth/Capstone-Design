@@ -30,6 +30,7 @@ public class BR_PlayerController : MonoBehaviour
 
     [Header("Swimming & Diving")]
     public float swimSpeed = 2.5f;
+    public float sinkSpeed = 2f;
     public float maxAir = 15f;
     public float airDrainPerSecond = 1f;
     public float airRegenPerSecond = 5f;
@@ -150,6 +151,8 @@ public class BR_PlayerController : MonoBehaviour
         if (!inOcean && Input.GetKey(KeyCode.Space)) move.y += swimSpeed;
         else if (Input.GetKey(KeyCode.LeftControl)) move.y -= swimSpeed;
         else if (!submerged) move.y -= 1f;
+
+        if (inOcean) move.y -= sinkSpeed;
 
         cc.Move(move * Time.deltaTime);
         vertVel = Vector3.zero;
