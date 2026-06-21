@@ -77,7 +77,51 @@ public class BR_PostProcessing : MonoBehaviour
 
     public void ResetToBase() => ApplyBase();
 
+    // 익사 — 서서히 어두워지며 씬 리로드
+    public void TriggerDrowningEffect(float fadeDuration = 2.5f)
+    {
+        StartCoroutine(DrowningRoutine(fadeDuration));
+    }
+
+    // 산소량에 따라 화면 어둡게 (ratio 1=정상, 0=완전 암전)
+    public void SetOxygenDim(float ratio)
+    {
+        if (ratio >= 1f)
+        {
+            colorAdj.active = false;
+            return;
+        }
+        float t = 1f - ratio;
+        colorAdj.active = true;
+        colorAdj.postExposure.Override(Mathf.Lerp(0f, -5f, t));
+        colorAdj.colorFilter.Override(Color.Lerp(Color.white, new Color(0.3f, 0.5f, 0.7f), t * 0.6f));
+    }
+
     // ─── 코루틴 ──────────────────────────────────────────────────
+
+    IEnumerator DrowningRoutine(float dur)
+    {
+        colorAdj.active = true;
+        filmGrain.active = true;
+        vignette.active = true;
+
+        float t = 0f;
+        while (t < dur)
+        {
+            t += Time.deltaTime;
+            float p = t / dur;
+            colorAdj.postExposure.Override(Mathf.Lerp(0f, -10f, p));
+            colorAdj.colorFilter.Override(Color.Lerp(new Color(0.5f, 0.8f, 1f), Color.black, p));
+            filmGrain.intensity.Override(Mathf.Lerp(0.1f, 0.5f, p));
+            vignette.intensity.Override(Mathf.Lerp(0f, 0.9f, p));
+            yield return null;
+        }
+
+        PlayerPrefs.SetInt("BR_HasDied", 1);
+        PlayerPrefs.Save();
+        UnityEngine.SceneManagement.SceneManager.LoadScene(
+            UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+    }
 
     IEnumerator DeathRoutine()
     {

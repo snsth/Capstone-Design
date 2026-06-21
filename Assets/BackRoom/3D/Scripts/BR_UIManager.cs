@@ -103,7 +103,6 @@ public class BR_UIManager : MonoBehaviour
     {
         DrawCrosshair();
         if (!InventoryOpen) DrawPrompt();
-        DrawAirBar();
         DrawSubtitle();
         if (InventoryOpen)
         {
