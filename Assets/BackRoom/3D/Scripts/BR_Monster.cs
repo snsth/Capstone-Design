@@ -13,7 +13,7 @@ public class BR_Monster : MonoBehaviour
     [Header("이동")]
     public float moveSpeed = 4f;
     [Tooltip("이 거리 이내로 플레이어가 접근하면 추격 시작")]
-    public float chaseRange = 15f;
+    public float chaseRange = 30f;
     [Tooltip("이 거리 이하로 접근하면 플레이어 사망")]
     public float killDistance = 1.5f;
 

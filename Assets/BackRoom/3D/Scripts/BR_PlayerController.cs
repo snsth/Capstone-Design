@@ -209,7 +209,15 @@ public class BR_PlayerController : MonoBehaviour
     void ManageAir(bool inWater)
     {
         if (submerged)
+        {
             currentAir = Mathf.Max(0f, currentAir - airDrainPerSecond * Time.deltaTime);
+            if (currentAir <= 0f)
+            {
+                UnityEngine.SceneManagement.SceneManager.LoadScene(
+                    UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+                return;
+            }
+        }
         else if (!inWater && currentAir < maxAir)
             currentAir = Mathf.Min(maxAir, currentAir + airRegenPerSecond * Time.deltaTime);
     }
