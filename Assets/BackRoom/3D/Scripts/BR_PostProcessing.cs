@@ -8,10 +8,10 @@ public class BR_PostProcessing : MonoBehaviour
     public static BR_PostProcessing Instance { get; private set; }
 
     [Header("기본 분위기")]
-    [Range(0f, 1f)] public float baseVignetteIntensity  = 0.42f;
-    [Range(0f, 1f)] public float baseFilmGrainIntensity = 0.14f;
-    public float baseContrast   = 18f;
-    public float basePostExposure = -0.6f;
+    [Range(0f, 1f)] public float baseVignetteIntensity  = 0.10f;
+    [Range(0f, 1f)] public float baseFilmGrainIntensity = 0.08f;
+    public float baseContrast   = 8f;
+    public float basePostExposure = -0.2f;
 
     [Header("죽음 연출")]
     [Range(0f, 1f)] public float deathVignetteIntensity = 0.97f;
