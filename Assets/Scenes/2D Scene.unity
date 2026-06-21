@@ -18920,99 +18920,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 444740817}
   m_CullTransparentMesh: 1
---- !u!1 &467034388
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 467034391}
-  - component: {fileID: 467034390}
-  - component: {fileID: 467034389}
-  m_Layer: 0
-  m_Name: EnemyCleaner
-  m_TagString: Bullet
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &467034389
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 467034388}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d0d01be8a059f04c8a1f251cf14bc69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Bullet
-  damage: 1000000
-  per: -1
---- !u!61 &467034390
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 467034388}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 1000, y: 1000}
-  m_EdgeRadius: 0
---- !u!4 &467034391
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 467034388}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &493036899
 GameObject:
   m_ObjectHideFlags: 0
@@ -38260,17 +38167,16 @@ MonoBehaviour:
   gameTime: 0
   maxGameTime: 120
   isLive: 0
-  health: 100
-  maxHealth: 100
+  health: 200
+  maxHealth: 200
   level: 0
   kill: 0
-  exp: 0
+  exp: 5
   nextExp: 0a0000000f00000019000000230000002d00000037000000410000004b0000005500000064000000
   player: {fileID: 1055480101}
   uilevelUp: {fileID: 1127431170}
   UIResult: {fileID: 655273385}
   pool: {fileID: 1323786381}
-  enemyCleaner: {fileID: 467034388}
 --- !u!4 &991334673
 Transform:
   m_ObjectHideFlags: 0
@@ -38299,12 +38205,44 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HorrorEventManager
   events:
-  - label: "\uD32C\uD140 \uC2A4\uD3F0"
-    type: 0
-    triggerTime: 10
+  - label: "\uC774\uC0C1\uD589\uB3D9"
+    type: 3
+    triggerTime: 15
     jumpscareColor: {r: 1, g: 0, b: 0, a: 1}
     damagePercent: 0.2
-    phantomCount: 300
+    phantomCount: 25
+    phantomRadius: 5
+    freezeDuration: 3
+    patternBreakCount: 30
+    massSpawnCount: 30
+    massSpawnSpeed: 4
+    speedBoostMultiplier: 2.5
+    speedBoostDuration: 8
+    inputDuration: 3
+    staticRepeatCount: 4
+    staticRepeatInterval: 0.18
+  - label: "\uD32C\uD140 \uC2A4\uD3F0"
+    type: 0
+    triggerTime: 30
+    jumpscareColor: {r: 1, g: 0, b: 0, a: 1}
+    damagePercent: 0.2
+    phantomCount: 500
+    phantomRadius: 5
+    freezeDuration: 3
+    patternBreakCount: 3
+    massSpawnCount: 30
+    massSpawnSpeed: 4
+    speedBoostMultiplier: 2.5
+    speedBoostDuration: 8
+    inputDuration: 3
+    staticRepeatCount: 4
+    staticRepeatInterval: 0.18
+  - label: "\uC810\uD504\uC2A4\uCF00\uC5B41"
+    type: 4
+    triggerTime: 32
+    jumpscareColor: {r: 1, g: 0, b: 0, a: 1}
+    damagePercent: 0.2
+    phantomCount: 25
     phantomRadius: 5
     freezeDuration: 3
     patternBreakCount: 3
@@ -38317,6 +38255,70 @@ MonoBehaviour:
     staticRepeatInterval: 0.18
   - label: "\uC801 \uB3D9\uACB0"
     type: 2
+    triggerTime: 38
+    jumpscareColor: {r: 1, g: 0, b: 0, a: 1}
+    damagePercent: 0.2
+    phantomCount: 25
+    phantomRadius: 5
+    freezeDuration: 5
+    patternBreakCount: 3
+    massSpawnCount: 30
+    massSpawnSpeed: 4
+    speedBoostMultiplier: 2.5
+    speedBoostDuration: 8
+    inputDuration: 3
+    staticRepeatCount: 4
+    staticRepeatInterval: 0.18
+  - label: "\uC6C0\uC9C1\uC784X"
+    type: 9
+    triggerTime: 38
+    jumpscareColor: {r: 1, g: 0, b: 0, a: 1}
+    damagePercent: 0.2
+    phantomCount: 25
+    phantomRadius: 5
+    freezeDuration: 3
+    patternBreakCount: 3
+    massSpawnCount: 100
+    massSpawnSpeed: 8
+    speedBoostMultiplier: 1.5
+    speedBoostDuration: 3
+    inputDuration: 7
+    staticRepeatCount: 4
+    staticRepeatInterval: 0.18
+  - label: "\uD32C\uD140 \uC2A4\uD3F0"
+    type: 0
+    triggerTime: 45
+    jumpscareColor: {r: 1, g: 0, b: 0, a: 1}
+    damagePercent: 0.2
+    phantomCount: 200
+    phantomRadius: 8
+    freezeDuration: 4
+    patternBreakCount: 3
+    massSpawnCount: 20
+    massSpawnSpeed: 4
+    speedBoostMultiplier: 2.5
+    speedBoostDuration: 8
+    inputDuration: 3
+    staticRepeatCount: 15
+    staticRepeatInterval: 0.18
+  - label: "\uC810\uD504\uC2A4\uCF00\uC5B43"
+    type: 4
+    triggerTime: 48
+    jumpscareColor: {r: 1, g: 0, b: 0.045223117, a: 1}
+    damagePercent: 0.1
+    phantomCount: 25
+    phantomRadius: 5
+    freezeDuration: 3
+    patternBreakCount: 3
+    massSpawnCount: 30
+    massSpawnSpeed: 4
+    speedBoostMultiplier: 2.5
+    speedBoostDuration: 8
+    inputDuration: 3
+    staticRepeatCount: 4
+    staticRepeatInterval: 0.18
+  - label: "\uBC29\uD5A5\uD0A4 \uC88C\uC6B0\uBC18\uC804"
+    type: 8
     triggerTime: 60
     jumpscareColor: {r: 1, g: 0, b: 0, a: 1}
     damagePercent: 0.2
@@ -38328,12 +38330,12 @@ MonoBehaviour:
     massSpawnSpeed: 4
     speedBoostMultiplier: 2.5
     speedBoostDuration: 8
-    inputDuration: 3
+    inputDuration: 7
     staticRepeatCount: 4
     staticRepeatInterval: 0.18
-  - label: "\uC774\uC0C1\uD589\uB3D9"
-    type: 3
-    triggerTime: 68
+  - label: "\uC6C0\uC9C1\uC784 \uBA48\uCDA42"
+    type: 2
+    triggerTime: 80
     jumpscareColor: {r: 1, g: 0, b: 0, a: 1}
     damagePercent: 0.2
     phantomCount: 25
@@ -38347,23 +38349,7 @@ MonoBehaviour:
     inputDuration: 3
     staticRepeatCount: 4
     staticRepeatInterval: 0.18
-  - label: "\uC810\uD504\uC2A4\uCF00\uC5B4"
-    type: 4
-    triggerTime: 75
-    jumpscareColor: {r: 1, g: 0, b: 0, a: 1}
-    damagePercent: 0.2
-    phantomCount: 25
-    phantomRadius: 5
-    freezeDuration: 3
-    patternBreakCount: 3
-    massSpawnCount: 30
-    massSpawnSpeed: 4
-    speedBoostMultiplier: 2.5
-    speedBoostDuration: 8
-    inputDuration: 3
-    staticRepeatCount: 4
-    staticRepeatInterval: 0.18
-  - label: "\uB300\uADDC\uBAA8 \uC2A4\uD3F0"
+  - label: "\uB300\uADDC\uBAA8 \uBAB9 \uC0DD\uC131"
     type: 5
     triggerTime: 90
     jumpscareColor: {r: 1, g: 0, b: 0, a: 1}
@@ -38372,23 +38358,23 @@ MonoBehaviour:
     phantomRadius: 5
     freezeDuration: 3
     patternBreakCount: 3
-    massSpawnCount: 30
+    massSpawnCount: 150
     massSpawnSpeed: 4
     speedBoostMultiplier: 2.5
     speedBoostDuration: 8
     inputDuration: 3
     staticRepeatCount: 4
     staticRepeatInterval: 0.18
-  - label: "\uB178\uC774\uC988+\uB3D9\uACB0 \uCF64\uBCF4"
-    type: 6
-    triggerTime: 105
+  - label: "\uAC15\uC81C \uC0AC\uB9DD \uC804 \uCCB4\uB825 \uB9DE\uCD94\uAE30"
+    type: 4
+    triggerTime: 116
     jumpscareColor: {r: 1, g: 0, b: 0, a: 1}
-    damagePercent: 0.2
+    damagePercent: 0.5
     phantomCount: 25
     phantomRadius: 5
-    freezeDuration: 4
+    freezeDuration: 3
     patternBreakCount: 3
-    massSpawnCount: 20
+    massSpawnCount: 30
     massSpawnSpeed: 4
     speedBoostMultiplier: 2.5
     speedBoostDuration: 8
@@ -38399,23 +38385,7 @@ MonoBehaviour:
     type: 7
     triggerTime: 118
     jumpscareColor: {r: 1, g: 0, b: 0, a: 1}
-    damagePercent: 0.2
-    phantomCount: 25
-    phantomRadius: 5
-    freezeDuration: 3
-    patternBreakCount: 3
-    massSpawnCount: 30
-    massSpawnSpeed: 4
-    speedBoostMultiplier: 2.5
-    speedBoostDuration: 8
-    inputDuration: 3
-    staticRepeatCount: 4
-    staticRepeatInterval: 0.18
-  - label: "\uB178\uC774\uC988"
-    type: 1
-    triggerTime: 5
-    jumpscareColor: {r: 1, g: 0, b: 0, a: 1}
-    damagePercent: 0.2
+    damagePercent: 0.5
     phantomCount: 25
     phantomRadius: 5
     freezeDuration: 3
@@ -62332,8 +62302,8 @@ MonoBehaviour:
     spawnCount: 5
     health: 36
     speed: 2
-  minSpawnInterval: 0.3
-  maxSpawnInterval: 1.5
+  minSpawnInterval: 1
+  maxSpawnInterval: 2
 --- !u!1 &1673922356
 GameObject:
   m_ObjectHideFlags: 0
@@ -72307,6 +72277,80 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2053050597}
   m_CullTransparentMesh: 1
+--- !u!1 &2062058018
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2062058021}
+  - component: {fileID: 2062058020}
+  - component: {fileID: 2062058019}
+  m_Layer: 0
+  m_Name: enemyCleaner
+  m_TagString: Enemy
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2062058019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062058018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d0d01be8a059f04c8a1f251cf14bc69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bullet
+  damage: 100000
+  per: -1
+--- !u!50 &2062058020
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062058018}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!4 &2062058021
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062058018}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2079904871
 GameObject:
   m_ObjectHideFlags: 0
@@ -77012,5 +77056,5 @@ SceneRoots:
   - {fileID: 1122160036}
   - {fileID: 221736505}
   - {fileID: 16117777}
-  - {fileID: 467034391}
   - {fileID: 407902124}
+  - {fileID: 2062058021}

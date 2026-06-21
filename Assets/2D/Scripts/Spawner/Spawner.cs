@@ -71,9 +71,11 @@ public class Spawner : MonoBehaviour
         return phantoms;
     }
 
-    // 공포 이벤트: 지정한 수만큼 랜덤 적을 한꺼번에 쏟아냄
+    // 공포 이벤트: 지정한 수만큼 플레이어 주변 원형 범위에서 한꺼번에 쏟아냄
     public void SpawnHorrorWave(int count, float speedOverride)
     {
+        Vector3 playerPos = Gamemanager.instance.player.transform.position;
+
         for (int i = 0; i < count; i++)
         {
             SpawnData data = spawnData[Random.Range(0, spawnData.Length)];
@@ -86,8 +88,12 @@ public class Spawner : MonoBehaviour
                 speed      = speedOverride
             };
 
+            Vector2 dir = Random.insideUnitCircle.normalized;
+            float dist = Random.Range(12f, 18f);
+            Vector3 pos = playerPos + new Vector3(dir.x * dist, dir.y * dist, 0f);
+
             GameObject enemy = Gamemanager.instance.pool.Get(0);
-            enemy.transform.position = spawnPoints[Random.Range(1, spawnPoints.Length)].position;
+            enemy.transform.position = pos;
             enemy.GetComponent<EnemyMovement>().Init(horrorData);
         }
     }

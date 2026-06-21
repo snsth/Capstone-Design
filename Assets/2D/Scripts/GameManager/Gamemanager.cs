@@ -37,7 +37,6 @@ public class Gamemanager : MonoBehaviour
     /// 오브젝트 풀 매니저 참조. 적 스폰 등 풀에서 오브젝트를 꺼낼 때 사용.
     /// </summary>
     public PoolManager pool;
-    public GameObject enemyCleaner;
     void Awake()
     {
         // 싱글톤 초기화: 이 오브젝트를 전역 인스턴스로 등록
@@ -82,7 +81,6 @@ public class Gamemanager : MonoBehaviour
     IEnumerator GameVictoryRoutine()
     {
         isLive = false;
-        enemyCleaner.SetActive(true);
 
         yield return new WaitForSeconds(0.5f);
 
