@@ -117,7 +117,7 @@ public class BR_PlayerController : MonoBehaviour
         bool inWater = waterCount > 0;
         submerged = inWater && cameraTransform != null && cameraTransform.position.y < waterSurfaceY - 0.15f;
 
-        if (inWater) SwimMove();
+        if (inWater && !cc.isGrounded) SwimMove();
         else GroundMove();
 
         ManageAir(inWater);
