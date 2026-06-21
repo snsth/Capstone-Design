@@ -296,6 +296,77 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    // 같은 사운드를 겹쳐서 재생 (PlayOneShot — 이전 재생을 끊지 않음)
+    // StaticNoise 연속 재생 등 빠른 반복 연출용
+    public void PlaySfxOneShot(SFX sfx)
+    {
+        if (_isHorrorEventActive && (int)sfx < (int)SFX.HorrorNoise) return;
+
+        AudioClip clip = sfxClips[(int)sfx];
+        if (clip == null) return;
+
+        if ((int)sfx >= (int)SFX.HorrorNoise)
+            horrorSfxPlayer.PlayOneShot(clip);
+        else
+        {
+            // 일반 SFX도 OneShot 지원 — 빈 채널 찾아서 재생
+            foreach (var p in sfxPlayers)
+                if (!p.isPlaying) { p.PlayOneShot(clip); break; }
+        }
+    }
+
+    // ── 게임 종료 시 오디오 정리 ──────────────────────────────
+    // 모든 SFX 채널 즉시 정지 + 공포 이벤트 상태 초기화
+    // GameOver/GameVictory 직전에 호출해야 Lose/Win SFX가 정상 재생됨
+    public void StopAllSfx()
+    {
+        foreach (var p in sfxPlayers)
+            if (p != null) p.Stop();
+        if (horrorSfxPlayer != null) horrorSfxPlayer.Stop();
+
+        _isHorrorEventActive = false;
+        if (_duckCoroutine != null)
+        {
+            StopCoroutine(_duckCoroutine);
+            _duckCoroutine = null;
+        }
+    }
+
+    // ── 완전 무음 (기법1) ──────────────────────────────────
+
+    // BGM + 전체 SFX(공포 전용 채널 포함) 즉시 차단
+    // 기법1: 점프스케어 직전 1.4~2.0s 동안 완전 무음 구간 연출용
+    public void MuteAllAudio()
+    {
+        if (audioMixer != null)
+        {
+            audioMixer.SetFloat("BGMVolume", -80f);
+            audioMixer.SetFloat("SFXVolume", -80f);
+        }
+        else
+        {
+            if (bgmPlayer != null) bgmPlayer.volume = 0f;
+            foreach (var p in sfxPlayers) if (p != null) p.volume = 0f;
+        }
+        if (horrorSfxPlayer != null) horrorSfxPlayer.volume = 0f;
+    }
+
+    // MuteAllAudio() 이후 슬라이더 설정값으로 즉시 복구
+    public void UnmuteAllAudio()
+    {
+        if (audioMixer != null)
+        {
+            audioMixer.SetFloat("BGMVolume", LinearToDb(bgmVolume));
+            audioMixer.SetFloat("SFXVolume", LinearToDb(sfxVolume));
+        }
+        else
+        {
+            if (bgmPlayer != null) bgmPlayer.volume = bgmVolume;
+            foreach (var p in sfxPlayers) if (p != null) p.volume = sfxVolume;
+        }
+        if (horrorSfxPlayer != null) horrorSfxPlayer.volume = 1f;
+    }
+
     // ── 유틸 ───────────────────────────────────────────────
 
     // 선형 볼륨(0~1) → dB 변환 (0에 가까울 때 -80dB로 음소거)

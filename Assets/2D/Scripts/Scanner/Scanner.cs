@@ -10,8 +10,18 @@ public class Scanner : MonoBehaviour
     public RaycastHit2D[] targets;
     public Transform neareastTarget;
 
+    // 기법2 무기정지: true이면 탐지 중단 → neareastTarget = null → Weapon 자동발사 멈춤
+    public static bool isDisabled = false;
+
     private void FixedUpdate()
     {
+        if (isDisabled)
+        {
+            targets = new RaycastHit2D[0];
+            neareastTarget = null;
+            return;
+        }
+
         targets=Physics2D.CircleCastAll(transform.position,scanRange,Vector2.zero,0,targetLayer);
         neareastTarget = GetNearest();
     }

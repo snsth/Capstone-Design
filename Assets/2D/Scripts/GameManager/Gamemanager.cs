@@ -64,7 +64,9 @@ public class Gamemanager : MonoBehaviour
         isLive = false;
 
         yield return new WaitForSeconds(0.5f);
-        
+
+        // SFX 전부 정지 + 공포 이벤트 상태 초기화 → Lose 사운드가 차단되지 않도록
+        AudioManager.instance.StopAllSfx();
         UIResult.gameObject.SetActive(true);
         UIResult.Lose();
         Stop();
@@ -83,7 +85,8 @@ public class Gamemanager : MonoBehaviour
         enemyCleaner.SetActive(true);
 
         yield return new WaitForSeconds(0.5f);
-        
+
+        AudioManager.instance.StopAllSfx();
         UIResult.gameObject.SetActive(true);
         UIResult.Win();
         Stop();
