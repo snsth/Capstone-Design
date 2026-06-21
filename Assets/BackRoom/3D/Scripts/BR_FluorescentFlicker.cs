@@ -1,105 +1,113 @@
 using System.Collections;
 using UnityEngine;
 
-// 형광등 깜빡임: 머티리얼 Emission + Light 컴포넌트 동시 제어
-// 오브젝트에 Renderer와 Light 중 하나만 있어도 동작
 public class BR_FluorescentFlicker : MonoBehaviour
 {
-    [Header("머티리얼 Emission")]
-    [Tooltip("깜빡일 Renderer (없으면 자동 탐색)")]
-    public Renderer targetRenderer;
-    [Tooltip("Emission에 사용할 기본 색상")]
-    public Color emissionColor = new Color(1f, 0.98f, 0.9f);
-    [Tooltip("켜진 상태 Emission 강도 (HDRP는 수만~수십만)")]
-    public float onIntensity = 3f;
-    [Tooltip("꺼진 상태 Emission 강도")]
-    public float offIntensity = 0f;
+    [Header("깜빡일 라이트 (형광등 Light + 포인트 라이트 드래그)")]
+    public Light[] lights;
 
-    [Header("Light 컴포넌트")]
-    [Tooltip("같이 깜빡일 Light (없으면 자동 탐색)")]
-    public Light flickerLight;
-    [Tooltip("켜진 상태 Light 강도")]
-    public float lightOnIntensity = 150000f;
+    [Header("형광등 메시 Renderer (여러 개 드래그 가능)")]
+    public Renderer[] targetRenderers;
+    [Tooltip("-1 이면 모든 머티리얼, 특정 번호 지정 시 해당 머티리얼만 Emission 조절")]
+    public int emissiveMaterialIndex = -1;
 
-    [Header("깜빡임 타이밍")]
-    [Tooltip("정상 점등 유지 최소 시간(초)")]
-    public float stableMinTime = 3f;
-    [Tooltip("정상 점등 유지 최대 시간(초)")]
-    public float stableMaxTime = 12f;
-    [Tooltip("깜빡임 1회 최소 횟수")]
-    public int flickerMinCount = 1;
-    [Tooltip("깜빡임 1회 최대 횟수")]
-    public int flickerMaxCount = 5;
-    [Tooltip("깜빡임 한 번의 꺼짐 시간 (초)")]
-    public float flickerOffDuration = 0.06f;
-    [Tooltip("깜빡임 한 번의 켜짐 시간 (초)")]
-    public float flickerOnDuration = 0.08f;
+    [Header("안정 구간 (초)")]
+    public float minStableTime = 2f;
+    public float maxStableTime = 10f;
 
-    Material mat;
-    static readonly int EmissionColorID = Shader.PropertyToID("_EmissiveColor");       // HDRP
-    static readonly int EmissionColorLegacyID = Shader.PropertyToID("_EmissionColor"); // Built-in
+    [Header("깜빡임 횟수")]
+    public int minFlickerCount = 1;
+    public int maxFlickerCount = 6;
 
-    void Awake()
+    [Header("깜빡임 속도 (초)")]
+    public float minOffTime = 0.03f;
+    public float maxOffTime  = 0.15f;
+    public float minOnTime  = 0.04f;
+    public float maxOnTime  = 0.12f;
+
+    Material[][] instancedMats;
+    Color[][] savedEmission;
+
+    static readonly int HDRPEmission    = Shader.PropertyToID("_EmissiveColor");
+    static readonly int BuiltinEmission = Shader.PropertyToID("_EmissionColor");
+
+    void Start()
     {
-        if (targetRenderer == null)
-            targetRenderer = GetComponentInChildren<Renderer>();
-
-        if (flickerLight == null)
-            flickerLight = GetComponentInChildren<Light>();
-
-        if (targetRenderer != null)
+        if (targetRenderers != null && targetRenderers.Length > 0)
         {
-            // 인스턴스 머티리얼 복사 (다른 오브젝트에 영향 X)
-            mat = targetRenderer.material;
-            mat.EnableKeyword("_EMISSION");
-            SetEmission(onIntensity);
-        }
+            instancedMats = new Material[targetRenderers.Length][];
+            savedEmission = new Color[targetRenderers.Length][];
 
-        if (flickerLight != null)
-            flickerLight.intensity = lightOnIntensity;
+            for (int r = 0; r < targetRenderers.Length; r++)
+            {
+                if (targetRenderers[r] == null) continue;
+
+                instancedMats[r] = targetRenderers[r].materials;
+                savedEmission[r] = new Color[instancedMats[r].Length];
+
+                int start = emissiveMaterialIndex < 0 ? 0 : emissiveMaterialIndex;
+                int end   = emissiveMaterialIndex < 0 ? instancedMats[r].Length : emissiveMaterialIndex + 1;
+                end = Mathf.Min(end, instancedMats[r].Length);
+
+                for (int i = start; i < end; i++)
+                {
+                    var mat = instancedMats[r][i];
+                    if (mat.HasProperty(HDRPEmission))
+                        savedEmission[r][i] = mat.GetColor(HDRPEmission);
+                    else if (mat.HasProperty(BuiltinEmission))
+                        savedEmission[r][i] = mat.GetColor(BuiltinEmission);
+                }
+            }
+        }
 
         StartCoroutine(FlickerLoop());
     }
 
-    void SetEmission(float intensity)
+    void SetState(bool on)
     {
-        if (mat == null) return;
-        Color c = emissionColor * intensity;
-        // HDRP와 Built-in 둘 다 시도
-        if (mat.HasProperty(EmissionColorID))
-            mat.SetColor(EmissionColorID, c);
-        else if (mat.HasProperty(EmissionColorLegacyID))
-            mat.SetColor(EmissionColorLegacyID, c);
-    }
+        // 라이트 켜기/끄기
+        if (lights != null)
+            foreach (var l in lights)
+                if (l != null) l.enabled = on;
 
-    void SetLight(bool on)
-    {
-        if (flickerLight == null) return;
-        flickerLight.intensity = on ? lightOnIntensity : 0f;
+        // Emission 켜기/끄기
+        if (instancedMats == null) return;
+
+        for (int r = 0; r < instancedMats.Length; r++)
+        {
+            if (instancedMats[r] == null) continue;
+
+            int start = emissiveMaterialIndex < 0 ? 0 : emissiveMaterialIndex;
+            int end   = emissiveMaterialIndex < 0 ? instancedMats[r].Length : emissiveMaterialIndex + 1;
+            end = Mathf.Min(end, instancedMats[r].Length);
+
+            for (int i = start; i < end; i++)
+            {
+                var mat = instancedMats[r][i];
+                Color c = on ? savedEmission[r][i] : Color.black;
+                if (mat.HasProperty(HDRPEmission))
+                    mat.SetColor(HDRPEmission, c);
+                else if (mat.HasProperty(BuiltinEmission))
+                    mat.SetColor(BuiltinEmission, c);
+            }
+        }
     }
 
     IEnumerator FlickerLoop()
     {
         while (true)
         {
-            // 안정 점등 구간
-            yield return new WaitForSeconds(Random.Range(stableMinTime, stableMaxTime));
+            yield return new WaitForSeconds(Random.Range(minStableTime, maxStableTime));
 
-            // 깜빡임 N회
-            int count = Random.Range(flickerMinCount, flickerMaxCount + 1);
+            int count = Random.Range(minFlickerCount, maxFlickerCount + 1);
             for (int i = 0; i < count; i++)
             {
-                // 꺼짐
-                SetEmission(offIntensity);
-                SetLight(false);
-                yield return new WaitForSeconds(flickerOffDuration);
+                SetState(false);
+                yield return new WaitForSeconds(Random.Range(minOffTime, maxOffTime));
 
-                // 켜짐
-                SetEmission(onIntensity);
-                SetLight(true);
-
+                SetState(true);
                 if (i < count - 1)
-                    yield return new WaitForSeconds(flickerOnDuration);
+                    yield return new WaitForSeconds(Random.Range(minOnTime, maxOnTime));
             }
         }
     }
