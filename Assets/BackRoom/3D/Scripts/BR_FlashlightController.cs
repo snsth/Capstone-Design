@@ -4,10 +4,11 @@
 public class BR_FlashlightController : MonoBehaviour
 {
     [Header("Light Settings")]
-    [Range(10f, 200f)]  public float range           = 80f;
-    [Range(10f, 120f)]  public float spotAngle       = 75f;
-    [Range(5f,  90f)]   public float innerSpotAngle  = 40f;
-    [Range(0f,  500f)]  public float intensity       = 150f;
+    [Range(1f, 80f)]    public float range           = 20f;
+    [Range(10f, 120f)]  public float spotAngle       = 50f;
+    [Range(5f,  90f)]   public float innerSpotAngle  = 20f;
+    // HDRP는 candela/lumen 단위 사용 — Built-in RP라면 5~20으로 낮출 것
+    public float intensity = 150000f;
     public Color lightColor = new Color(1f, 0.97f, 0.92f);
 
     Light spotLight;
@@ -40,9 +41,8 @@ public class BR_FlashlightController : MonoBehaviour
         spotLight.spotAngle      = spotAngle;
         spotLight.innerSpotAngle = innerSpotAngle;
         spotLight.intensity      = intensity;
-        spotLight.color          = lightColor;
-        spotLight.shadows        = LightShadows.Soft;
-        spotLight.renderMode     = LightRenderMode.ForcePixel;
+        spotLight.color   = lightColor;
+        spotLight.shadows = LightShadows.Soft;
     }
 
     public void SetActive(bool on)
