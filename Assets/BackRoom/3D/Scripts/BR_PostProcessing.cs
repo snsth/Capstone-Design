@@ -69,18 +69,6 @@ public class BR_PostProcessing : MonoBehaviour
 
     // ─── 공개 API ────────────────────────────────────────────────
 
-    // 손전등 켤 때 자동노출이 빛을 상쇄하지 않도록 노출값 보정
-    public void SetFlashlightExposureBias(float bias)
-    {
-        colorAdj.active = (bias != 0f);
-        if (bias != 0f)
-        {
-            colorAdj.postExposure.Override(bias);
-            colorAdj.colorFilter.Override(Color.white);
-            colorAdj.contrast.Override(0f);
-        }
-    }
-
     public void TriggerDeathEffect()
     {
         if (deathRoutine != null) StopCoroutine(deathRoutine);
