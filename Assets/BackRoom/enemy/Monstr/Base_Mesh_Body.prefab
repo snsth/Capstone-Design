@@ -377,9 +377,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BR_Monster
   detectionRange: 100000
-  moveSpeed: 4
+  moveSpeed: 10
   chaseRange: 500
   killDistance: 1.5
+  headHeight: 1.7
+  closeupDistance: 0.55
+  closeupDuration: 0.7
+  deathHoldTime: 2.5
+  shakeIntensityMove: 0.12
+  shakeIntensityHold: 0.06
   animator: {fileID: 0}
   walkStateName: walking
 --- !u!1 &2504964201861980850
