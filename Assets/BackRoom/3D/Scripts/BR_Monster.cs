@@ -11,7 +11,10 @@ public class BR_Monster : MonoBehaviour
     public float detectionRange = 40f;
 
     [Header("이동")]
-    public float moveSpeed = 4f;
+    [Tooltip("첫 플레이 속도")]
+    public float moveSpeed = 15f;
+    [Tooltip("한 번 죽은 뒤 속도")]
+    public float moveSpeedAfterDeath = 4f;
     [Tooltip("이 거리 이내로 플레이어가 접근하면 추격 시작")]
     public float chaseRange = 500f;
     [Tooltip("이 거리 이하로 접근하면 플레이어 사망")]
@@ -41,6 +44,7 @@ public class BR_Monster : MonoBehaviour
     Transform player;
     Transform playerCamera;
     Camera playerCam;
+    BR_PlayerController playerCtrl;
     bool caught;
 
     // 문 열린 뒤 모든 몬스터를 강제 추격으로 전환하는 전역 플래그
@@ -55,7 +59,8 @@ public class BR_Monster : MonoBehaviour
         anyKilling = false;
 
         agent = GetComponent<NavMeshAgent>();
-        agent.speed            = moveSpeed;
+        float speed = PlayerPrefs.GetInt("BR_HasDied", 0) == 1 ? moveSpeedAfterDeath : moveSpeed;
+        agent.speed            = speed;
         agent.angularSpeed     = 720f;
         agent.acceleration     = 100f;
         agent.stoppingDistance = killDistance;
@@ -65,6 +70,7 @@ public class BR_Monster : MonoBehaviour
         {
             player       = pc.transform;
             playerCamera = pc.cameraTransform;
+            playerCtrl   = pc;
         }
 
         if (animator == null)
@@ -76,6 +82,9 @@ public class BR_Monster : MonoBehaviour
     void Update()
     {
         if (player == null || caught) return;
+
+        if (alwaysChase && playerCtrl != null && agent.isOnNavMesh)
+            agent.speed = playerCtrl.sprintSpeed + 1f;
 
         bool observed = !alwaysChase && IsObservedByPlayer();
 
@@ -173,51 +182,79 @@ public class BR_Monster : MonoBehaviour
         if (pc != null) pc.enabled = false;
         if (agent.isOnNavMesh) { agent.isStopped = true; agent.velocity = Vector3.zero; }
 
+        // 포스트 프로세싱 충격 연출 즉시 발동
+        BR_PostProcessing.Instance?.TriggerDeathEffect();
+
         if (playerCamera != null)
         {
-            Vector3    headPos   = transform.position + Vector3.up * headHeight;
-            Vector3    camTarget = headPos + transform.forward * closeupDistance;
-            Quaternion rotTarget = Quaternion.LookRotation(headPos - camTarget);
+            Vector3 headPos = transform.position + Vector3.up * headHeight;
+            // 플레이어 카메라 → 몬스터 방향으로 closeupDistance 만큼 앞에 배치
+            Vector3 camDir    = (headPos - playerCamera.position).normalized;
+            Vector3 camTarget = headPos - camDir * closeupDistance;
+            Quaternion rotTarget = Quaternion.LookRotation(camDir);
 
             playerCamera.SetParent(null);
 
-            // Phase 1: 클로즈업으로 빠르게 이동 + 강한 흔들기
-            float      elapsed  = 0f;
             Vector3    startPos = playerCamera.position;
             Quaternion startRot = playerCamera.rotation;
+            float      elapsed  = 0f;
 
+            // Phase 0 (0.2s): 순간 슬로우 + 제자리 폭발 흔들기
+            Time.timeScale = 0.15f;
+            const float preDur = 0.2f;
+            while (elapsed < preDur)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float jerk = shakeIntensityMove * 2.4f;
+                playerCamera.position = startPos + Random.insideUnitSphere * jerk;
+                playerCamera.rotation = startRot * Quaternion.Euler(
+                    Random.Range(-1f, 1f) * jerk * 90f,
+                    Random.Range(-1f, 1f) * jerk * 90f,
+                    Random.Range(-1f, 1f) * jerk * 55f);
+                yield return null;
+            }
+
+            // 타임스케일 복원
+            Time.timeScale = 1f;
+
+            // Phase 1 (closeupDuration): 얼굴로 빠르게 돌진 + 강한 흔들기
+            elapsed = 0f;
             while (elapsed < closeupDuration)
             {
                 elapsed += Time.deltaTime;
-                float   t        = Mathf.SmoothStep(0f, 1f, elapsed / closeupDuration);
-                Vector3 shake    = Random.insideUnitSphere * shakeIntensityMove;
-                Vector3 rotShake = new Vector3(
-                    Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f))
-                    * shakeIntensityMove * 40f;
+                float t     = Mathf.Pow(elapsed / closeupDuration, 0.45f); // 끝에서 빠르게
+                float shake = shakeIntensityMove * (1f - t * 0.4f);
 
-                playerCamera.position = Vector3.Lerp(startPos, camTarget, t) + shake;
+                playerCamera.position = Vector3.Lerp(startPos, camTarget, t)
+                                      + Random.insideUnitSphere * shake;
                 playerCamera.rotation = Quaternion.Slerp(startRot, rotTarget, t)
-                                      * Quaternion.Euler(rotShake);
+                                      * Quaternion.Euler(
+                                            Random.Range(-1f, 1f) * shake * 70f,
+                                            Random.Range(-1f, 1f) * shake * 70f,
+                                            Random.Range(-1f, 1f) * shake * 45f);
                 yield return null;
             }
 
             BR_SoundManager.Instance?.PlayZombieScream();
 
-            // Phase 2: 클로즈업 유지 + 서서히 약해지는 흔들기
+            // Phase 2 (deathHoldTime): 클로즈업 고정 + 흔들기 소멸
             elapsed = 0f;
             while (elapsed < deathHoldTime)
             {
                 elapsed += Time.deltaTime;
-                float   mag      = shakeIntensityHold * (1f - Mathf.Clamp01(elapsed / deathHoldTime));
-                Vector3 shake    = Random.insideUnitSphere * mag;
-                Vector3 rotShake = new Vector3(
-                    Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f))
-                    * mag * 30f;
+                float mag = shakeIntensityHold
+                          * Mathf.Pow(1f - Mathf.Clamp01(elapsed / deathHoldTime), 1.5f);
 
-                playerCamera.position = camTarget + shake;
-                playerCamera.rotation = rotTarget * Quaternion.Euler(rotShake);
+                playerCamera.position = camTarget + Random.insideUnitSphere * mag;
+                playerCamera.rotation = rotTarget * Quaternion.Euler(
+                    Random.Range(-1f, 1f) * mag * 40f,
+                    Random.Range(-1f, 1f) * mag * 40f,
+                    Random.Range(-1f, 1f) * mag * 25f);
                 yield return null;
             }
+
+            playerCamera.position = camTarget;
+            playerCamera.rotation = rotTarget;
         }
         else
         {
@@ -225,6 +262,9 @@ public class BR_Monster : MonoBehaviour
             yield return new WaitForSeconds(deathHoldTime);
         }
 
+        PlayerPrefs.SetInt("BR_HasDied", 1);
+        PlayerPrefs.Save();
+        Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 

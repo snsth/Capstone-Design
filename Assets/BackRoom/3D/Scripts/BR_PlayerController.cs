@@ -89,7 +89,6 @@ public class BR_PlayerController : MonoBehaviour
             HeadBob();
             Interact();
         }
-        UpdateAirUI();
         BR_SoundManager.Instance?.SetNearWater(waterCount > 0);
     }
 
@@ -203,28 +202,27 @@ public class BR_PlayerController : MonoBehaviour
         cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, targetPos, bobSmoothing * Time.deltaTime);
     }
 
+    bool drowning;
+
     void ManageAir(bool inWater)
     {
         if (submerged)
         {
             currentAir = Mathf.Max(0f, currentAir - airDrainPerSecond * Time.deltaTime);
-            if (currentAir <= 0f)
+            BR_PostProcessing.Instance?.SetOxygenDim(currentAir / maxAir);
+            if (currentAir <= 0f && !drowning)
             {
-                if (oceanCount > 0)
-                    Application.Quit();
-                else
-                    UnityEngine.SceneManagement.SceneManager.LoadScene(
-                        UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
-                return;
+                drowning = true;
+                enabled  = false;
+                BR_PostProcessing.Instance?.TriggerDrowningEffect();
             }
         }
-        else if (!inWater && currentAir < maxAir)
-            currentAir = Mathf.Min(maxAir, currentAir + airRegenPerSecond * Time.deltaTime);
-    }
-
-    void UpdateAirUI()
-    {
-        BR_UIManager.Instance?.SetAir(currentAir / maxAir, submerged);
+        else
+        {
+            if (!inWater && currentAir < maxAir)
+                currentAir = Mathf.Min(maxAir, currentAir + airRegenPerSecond * Time.deltaTime);
+            BR_PostProcessing.Instance?.SetOxygenDim(currentAir / maxAir);
+        }
     }
 
     void Interact()

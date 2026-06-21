@@ -1,5 +1,6 @@
-using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 [DefaultExecutionOrder(-50)]
 public class BR_UIManager : MonoBehaviour
@@ -7,10 +8,18 @@ public class BR_UIManager : MonoBehaviour
     public static BR_UIManager Instance { get; private set; }
     public bool InventoryOpen { get; private set; }
 
+    [Header("시작 자막")]
+    [TextArea] public string startSubtitleText = "열쇠를 찾아 비밀문을 열고 탈출하세요.";
+    public float subtitleDisplayTime = 4f;
+    public float subtitleFadeTime    = 0.8f;
+
     // State read by OnGUI every frame
     string prompt = "";
     float airRatio = 1f;
     bool showAir;
+
+    string subtitleText  = "";
+    float  subtitleAlpha = 0f;
 
     // Inventory
     Vector2 scrollPos;
@@ -23,9 +32,47 @@ public class BR_UIManager : MonoBehaviour
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
 
-        // Auto-create BR_Inventory if missing
         if (FindAnyObjectByType<BR_Inventory>() == null)
             new GameObject("BR_Inventory").AddComponent<BR_Inventory>();
+    }
+
+    void Start()
+    {
+        if (!string.IsNullOrEmpty(startSubtitleText))
+            StartCoroutine(SubtitleRoutine(startSubtitleText));
+    }
+
+    public void ShowSubtitle(string text)
+    {
+        StopCoroutine(nameof(SubtitleRoutine));
+        StartCoroutine(SubtitleRoutine(text));
+    }
+
+    IEnumerator SubtitleRoutine(string text)
+    {
+        subtitleText  = text;
+        subtitleAlpha = 0f;
+
+        // Fade in
+        for (float t = 0f; t < subtitleFadeTime; t += Time.deltaTime)
+        {
+            subtitleAlpha = t / subtitleFadeTime;
+            yield return null;
+        }
+        subtitleAlpha = 1f;
+
+        // Hold
+        yield return new WaitForSeconds(subtitleDisplayTime);
+
+        // Fade out
+        for (float t = 0f; t < subtitleFadeTime; t += Time.deltaTime)
+        {
+            subtitleAlpha = 1f - t / subtitleFadeTime;
+            yield return null;
+        }
+
+        subtitleAlpha = 0f;
+        subtitleText  = "";
     }
 
     // ─── Input ───────────────────────────────────
@@ -56,12 +103,38 @@ public class BR_UIManager : MonoBehaviour
     {
         DrawCrosshair();
         if (!InventoryOpen) DrawPrompt();
-        DrawAirBar();
+        DrawSubtitle();
         if (InventoryOpen)
         {
             DrawInventory();
             if (showCtx) DrawContextMenu();
         }
+    }
+
+    void DrawSubtitle()
+    {
+        if (string.IsNullOrEmpty(subtitleText) || subtitleAlpha <= 0f) return;
+
+        float w = 700f, h = 52f;
+        float x = (Screen.width  - w) * 0.5f;
+        float y =  Screen.height * 0.76f;
+
+        // 반투명 배경
+        GUI.color = new Color(0f, 0f, 0f, 0.62f * subtitleAlpha);
+        GUI.DrawTexture(new Rect(x - 12f, y - 4f, w + 24f, h + 8f), Texture2D.whiteTexture);
+
+        // 텍스트
+        var style = new GUIStyle(GUI.skin.label)
+        {
+            fontSize  = 22,
+            alignment = TextAnchor.MiddleCenter,
+            wordWrap  = true,
+        };
+        style.normal.textColor = new Color(1f, 1f, 1f, subtitleAlpha);
+        GUI.color = Color.white;
+        GUI.Label(new Rect(x, y, w, h), subtitleText, style);
+
+        GUI.color = Color.white;
     }
 
     void DrawCrosshair()
