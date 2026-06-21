@@ -1,10 +1,18 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BR_Door : MonoBehaviour
 {
     public string requiredItemId = "key_01";
     public string requiredItemName = "열쇠";
     public bool consumeItem = false;
+
+    [Header("탈출 설정")]
+    [Tooltip("이 문을 열면 게임 클리어 (탈출 문)")]
+    public bool isExitDoor = false;
+    [Tooltip("탈출 후 로드할 씬 이름 (비워두면 현재 씬 재시작)")]
+    public string nextSceneName = "";
 
     [Header("Open Animation")]
     public Vector3 openRotationOffset = new Vector3(0f, 90f, 0f);
@@ -42,5 +50,17 @@ public class BR_Door : MonoBehaviour
         if (consumeItem) BR_Inventory.Instance.Remove(requiredItemId);
         IsOpen = true;
         animating = true;
+
+        if (isExitDoor)
+            StartCoroutine(Escape());
+    }
+
+    IEnumerator Escape()
+    {
+        yield return new WaitForSeconds(1.5f);
+        string scene = string.IsNullOrEmpty(nextSceneName)
+            ? SceneManager.GetActiveScene().name
+            : nextSceneName;
+        SceneManager.LoadScene(scene);
     }
 }

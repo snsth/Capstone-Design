@@ -49,6 +49,7 @@ public class BR_PlayerController : MonoBehaviour
     float waterSurfaceY;
     bool submerged;
     float currentAir;
+    float footstepTimer;
 
     void Awake()
     {
@@ -87,6 +88,7 @@ public class BR_PlayerController : MonoBehaviour
             Interact();
         }
         UpdateAirUI();
+        BR_SoundManager.Instance?.SetNearWater(waterCount > 0);
     }
 
     void Look()
@@ -111,7 +113,6 @@ public class BR_PlayerController : MonoBehaviour
         if (onLadder) { LadderMove(); return; }
 
         bool inWater = waterCount > 0;
-        // 0.15m margin: air only drains when camera is clearly below the surface
         submerged = inWater && cameraTransform != null && cameraTransform.position.y < waterSurfaceY - 0.15f;
 
         if (inWater) SwimMove();
@@ -178,7 +179,22 @@ public class BR_PlayerController : MonoBehaviour
 
         float freq = isSprinting ? sprintBobFreq : walkBobFreq;
         if (isMoving)
+        {
             bobTimer += Time.deltaTime * freq;
+
+            // 발소리: 한 스텝(반 bob 주기)마다 재생
+            float stepInterval = isSprinting ? 1f / (sprintBobFreq * 2f) : 1f / (walkBobFreq * 2f);
+            if (footstepTimer <= 0f)
+            {
+                BR_SoundManager.Instance?.PlayFootstep();
+                footstepTimer = stepInterval;
+            }
+            footstepTimer -= Time.deltaTime;
+        }
+        else
+        {
+            footstepTimer = 0f;
+        }
 
         float amplY = isMoving ? (isSprinting ? sprintBobAmplY : walkBobAmplY) : 0f;
         float amplX = isMoving ? (isSprinting ? sprintBobAmplX : walkBobAmplX) : 0f;
@@ -194,7 +210,7 @@ public class BR_PlayerController : MonoBehaviour
     {
         if (submerged)
             currentAir = Mathf.Max(0f, currentAir - airDrainPerSecond * Time.deltaTime);
-        else if (currentAir < maxAir)
+        else if (!inWater && currentAir < maxAir)
             currentAir = Mathf.Min(maxAir, currentAir + airRegenPerSecond * Time.deltaTime);
     }
 
@@ -242,11 +258,13 @@ public class BR_PlayerController : MonoBehaviour
     {
         if (other.TryGetComponent<BR_WaterZone>(out var zone))
         {
+            if (waterCount == 0) BR_SoundManager.Instance?.PlayWaterEntry();
             waterCount++;
             waterSurfaceY = zone.SurfaceY;
         }
         else if (other.TryGetComponent<BR_OceanZone>(out var ocean))
         {
+            if (waterCount == 0) BR_SoundManager.Instance?.PlayWaterEntry();
             waterCount++;
             waterSurfaceY = ocean.SurfaceY;
         }
