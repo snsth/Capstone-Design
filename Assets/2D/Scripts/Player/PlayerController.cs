@@ -19,6 +19,10 @@ public class PlayerController : MonoBehaviour
     public float speed;
     public Scanner  scanner;
     public Hand[] hands;
+
+    // 공포 이벤트: 입력 제어 플래그
+    public static bool isInputBlocked  = false;  // true면 이동 완전 차단
+    public static bool isInputReversed = false;  // true면 WASD 방향 반전
     
     Rigidbody2D rigid;       // 물리 이동에 사용하는 Rigidbody2D 컴포넌트
     SpriteRenderer spriter;  // 좌우 반전 처리에 사용하는 SpriteRenderer 컴포넌트
@@ -57,9 +61,17 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         if (Gamemanager.instance.isLive == false) return;
-        // GetAxisRaw: -1, 0, 1 의 정수값만 반환 → 대각선 이동 시 normalized 처리 전 원본 입력
+
+        if (isInputBlocked)
+        {
+            inputVector = Vector2.zero;
+            return;
+        }
+
         inputVector.x = Input.GetAxisRaw("Horizontal");
         inputVector.y = Input.GetAxisRaw("Vertical");
+
+        if (isInputReversed) inputVector = -inputVector;
     }
 
     void FixedUpdate()

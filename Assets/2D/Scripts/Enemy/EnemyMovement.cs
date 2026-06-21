@@ -33,6 +33,10 @@ public class EnemyMovement : MonoBehaviour
     // 공포 이벤트: true이면 모든 적이 일제히 정지
     public static bool isFrozen = false;
 
+    // 기법4 이상행동 플래그
+    bool isPatternBreaking = false;
+    bool isStaring = false;
+
     Rigidbody2D rigid; // 물리 이동에 사용하는 Rigidbody2D 컴포넌트
     Collider2D coll;
     SpriteRenderer sr; // 좌우 반전 처리에 사용하는 SpriteRenderer 컴포넌트
@@ -56,8 +60,10 @@ public class EnemyMovement : MonoBehaviour
         if (!isLive || anim.GetCurrentAnimatorStateInfo(0).IsTag("Hit"))
             return;
 
-        // 공포 이벤트: 전체 동결 중이면 이동 중단
-        if (isFrozen) return;
+        // 전체 동결 — 단, 이상행동(PatternBreak) 중인 적은 isFrozen 무시
+        if (isFrozen && !isPatternBreaking) return;
+        // 이상행동 응시 단계: 정지
+        if (isStaring) return;
 
         // 적 → 플레이어 방향 벡터 (크기 = 현재 거리)
         Vector2 direction = target.position - rigid.position;
@@ -185,6 +191,32 @@ public class EnemyMovement : MonoBehaviour
     void Dead()
     {
         gameObject.SetActive(false);
+    }
+
+    // 기법4: 이상행동 — 정지(응시) → 고속 돌진. isFrozen 중에도 독립 실행
+    public void StartPatternBreak()
+    {
+        if (isPatternBreaking || !isLive) return;
+        StartCoroutine(PatternBreakRoutine());
+    }
+
+    IEnumerator PatternBreakRoutine()
+    {
+        isPatternBreaking = true;
+        float originalSpeed = speed;
+
+        // 1단계: 정지 + 응시 (0.8~1.2s)
+        isStaring = true;
+        yield return new WaitForSeconds(Random.Range(0.8f, 1.2f));
+
+        // 2단계: 3~4배 속도 돌진
+        isStaring = false;
+        speed = originalSpeed * Random.Range(3f, 4f);
+        yield return new WaitForSeconds(Random.Range(0.6f, 1.0f));
+
+        // 복구
+        speed = originalSpeed;
+        isPatternBreaking = false;
     }
 
     bool HasParameter(string paramName)

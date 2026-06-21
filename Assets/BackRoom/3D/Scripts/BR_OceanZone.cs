@@ -10,15 +10,17 @@ public class BR_OceanZone : MonoBehaviour
     [Tooltip("Depth of the trigger below the surface.")]
     public float depth = 300f;
 
-    // BR_PlayerController reads this to know where the surface is
+    [Header("Ocean Floor")]
+    [Tooltip("수면 아래 이 거리에 보이지 않는 바닥 콜라이더를 생성 (맵 밖으로 빠지는 것 방지)")]
+    public float floorDepth = 50f;
+
     public float SurfaceY => transform.position.y;
 
     void Awake()
     {
+        // 수영 트리거
         BoxCollider box = GetComponent<BoxCollider>();
         if (box == null) box = gameObject.AddComponent<BoxCollider>();
-
-        // Top of the box aligns with this object's Y position (water surface)
         box.isTrigger = true;
         box.center    = new Vector3(0f, -depth * 0.5f, 0f);
         box.size      = new Vector3(horizontalExtent * 2f, depth, horizontalExtent * 2f);
@@ -29,5 +31,16 @@ public class BR_OceanZone : MonoBehaviour
             rb.isKinematic = true;
             rb.useGravity  = false;
         }
+
+        // 바닥 콜라이더 — 별도 자식 오브젝트로 생성
+        var floorGO = new GameObject("OceanFloor_Collider");
+        floorGO.transform.SetParent(transform);
+        floorGO.transform.localPosition = new Vector3(0f, -floorDepth, 0f);
+        floorGO.layer = gameObject.layer;
+
+        var floorBox = floorGO.AddComponent<BoxCollider>();
+        floorBox.isTrigger = false;
+        floorBox.center = Vector3.zero;
+        floorBox.size   = new Vector3(horizontalExtent * 2f, 1f, horizontalExtent * 2f);
     }
 }

@@ -30,6 +30,7 @@ public class BR_PlayerController : MonoBehaviour
 
     [Header("Swimming & Diving")]
     public float swimSpeed = 2.5f;
+    public float sinkSpeed = 2f;
     public float maxAir = 15f;
     public float airDrainPerSecond = 1f;
     public float airRegenPerSecond = 5f;
@@ -46,10 +47,11 @@ public class BR_PlayerController : MonoBehaviour
 
     bool onLadder;
     int waterCount;
+    int oceanCount;
     float waterSurfaceY;
     bool submerged;
+    public bool IsSubmerged => submerged;
     float currentAir;
-    float footstepTimer;
 
     void Awake()
     {
@@ -87,7 +89,6 @@ public class BR_PlayerController : MonoBehaviour
             HeadBob();
             Interact();
         }
-        UpdateAirUI();
         BR_SoundManager.Instance?.SetNearWater(waterCount > 0);
     }
 
@@ -115,7 +116,7 @@ public class BR_PlayerController : MonoBehaviour
         bool inWater = waterCount > 0;
         submerged = inWater && cameraTransform != null && cameraTransform.position.y < waterSurfaceY - 0.15f;
 
-        if (inWater) SwimMove();
+        if (inWater && !cc.isGrounded) SwimMove();
         else GroundMove();
 
         ManageAir(inWater);
@@ -123,7 +124,8 @@ public class BR_PlayerController : MonoBehaviour
 
     void GroundMove()
     {
-        if (cc.isGrounded && vertVel.y < 0f) vertVel.y = -2f;
+        bool grounded = cc.isGrounded;
+        if (grounded && vertVel.y < 0f) vertVel.y = -2f;
 
         float x = Input.GetAxisRaw("Horizontal");
         float z = Input.GetAxisRaw("Vertical");
@@ -131,7 +133,7 @@ public class BR_PlayerController : MonoBehaviour
         Vector3 move = (transform.right * x + transform.forward * z).normalized;
         cc.Move(move * (sprint ? sprintSpeed : walkSpeed) * Time.deltaTime);
 
-        if (Input.GetButtonDown("Jump") && cc.isGrounded)
+        if (Input.GetButtonDown("Jump") && grounded)
             vertVel.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
 
         vertVel.y += gravity * Time.deltaTime;
@@ -144,9 +146,12 @@ public class BR_PlayerController : MonoBehaviour
         float z = Input.GetAxisRaw("Vertical");
         Vector3 move = (transform.right * x + transform.forward * z).normalized * swimSpeed;
 
-        if (Input.GetKey(KeyCode.Space)) move.y += swimSpeed;
+        bool inOcean = oceanCount > 0;
+        if (!inOcean && Input.GetKey(KeyCode.Space)) move.y += swimSpeed;
         else if (Input.GetKey(KeyCode.LeftControl)) move.y -= swimSpeed;
         else if (!submerged) move.y -= 1f;
+
+        if (inOcean) move.y -= sinkSpeed;
 
         cc.Move(move * Time.deltaTime);
         vertVel = Vector3.zero;
@@ -180,20 +185,11 @@ public class BR_PlayerController : MonoBehaviour
         float freq = isSprinting ? sprintBobFreq : walkBobFreq;
         if (isMoving)
         {
+            float prev = bobTimer;
             bobTimer += Time.deltaTime * freq;
-
-            // 발소리: 한 스텝(반 bob 주기)마다 재생
-            float stepInterval = isSprinting ? 1f / (sprintBobFreq * 2f) : 1f / (walkBobFreq * 2f);
-            if (footstepTimer <= 0f)
-            {
+            // 헤드밥 반 사이클마다 한 번 = 한 걸음
+            if (Mathf.FloorToInt(bobTimer) > Mathf.FloorToInt(prev))
                 BR_SoundManager.Instance?.PlayFootstep();
-                footstepTimer = stepInterval;
-            }
-            footstepTimer -= Time.deltaTime;
-        }
-        else
-        {
-            footstepTimer = 0f;
         }
 
         float amplY = isMoving ? (isSprinting ? sprintBobAmplY : walkBobAmplY) : 0f;
@@ -206,25 +202,27 @@ public class BR_PlayerController : MonoBehaviour
         cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, targetPos, bobSmoothing * Time.deltaTime);
     }
 
+    bool drowning;
+
     void ManageAir(bool inWater)
     {
         if (submerged)
         {
             currentAir = Mathf.Max(0f, currentAir - airDrainPerSecond * Time.deltaTime);
-            if (currentAir <= 0f)
+            BR_PostProcessing.Instance?.SetOxygenDim(currentAir / maxAir);
+            if (currentAir <= 0f && !drowning)
             {
-                UnityEngine.SceneManagement.SceneManager.LoadScene(
-                    UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
-                return;
+                drowning = true;
+                enabled  = false;
+                BR_PostProcessing.Instance?.TriggerDrowningEffect();
             }
         }
-        else if (!inWater && currentAir < maxAir)
-            currentAir = Mathf.Min(maxAir, currentAir + airRegenPerSecond * Time.deltaTime);
-    }
-
-    void UpdateAirUI()
-    {
-        BR_UIManager.Instance?.SetAir(currentAir / maxAir, submerged);
+        else
+        {
+            if (!inWater && currentAir < maxAir)
+                currentAir = Mathf.Min(maxAir, currentAir + airRegenPerSecond * Time.deltaTime);
+            BR_PostProcessing.Instance?.SetOxygenDim(currentAir / maxAir);
+        }
     }
 
     void Interact()
@@ -274,6 +272,7 @@ public class BR_PlayerController : MonoBehaviour
         {
             if (waterCount == 0) BR_SoundManager.Instance?.PlayWaterEntry();
             waterCount++;
+            oceanCount++;
             waterSurfaceY = ocean.SurfaceY;
         }
         if (other.gameObject.name.StartsWith("Railing_sideWall"))
@@ -282,8 +281,13 @@ public class BR_PlayerController : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        if (other.TryGetComponent<BR_WaterZone>(out _) || other.TryGetComponent<BR_OceanZone>(out _))
+        if (other.TryGetComponent<BR_WaterZone>(out _))
             waterCount = Mathf.Max(0, waterCount - 1);
+        else if (other.TryGetComponent<BR_OceanZone>(out _))
+        {
+            waterCount = Mathf.Max(0, waterCount - 1);
+            oceanCount = Mathf.Max(0, oceanCount - 1);
+        }
         if (other.gameObject.name.StartsWith("Railing_sideWall"))
             onLadder = false;
     }

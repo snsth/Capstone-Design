@@ -10,6 +10,10 @@ public class BR_MonsterSpawner : MonoBehaviour
     public float spawnRadius = 30f;
     [Tooltip("플레이어와 최소 이격 거리 (너무 가까이 스폰 방지)")]
     public float minDistFromPlayer = 15f;
+    [Tooltip("스폰 지점 장애물 체크 반경 (몬스터 캡슐 반지름에 맞게 조절)")]
+    public float clearanceRadius = 0.4f;
+    [Tooltip("장애물 체크 높이 (캡슐 하단 ~ 상단)")]
+    public float clearanceHeight = 1.8f;
 
     void Start()
     {
@@ -18,6 +22,13 @@ public class BR_MonsterSpawner : MonoBehaviour
             Debug.LogWarning("[BR_MonsterSpawner] monsterPrefab이 할당되지 않았습니다.");
             return;
         }
+        SpawnMonsters();
+    }
+
+    // 문 열릴 때 추가 대량 스폰
+    public void Activate()
+    {
+        if (monsterPrefab == null) return;
         SpawnMonsters();
     }
 
@@ -43,6 +54,12 @@ public class BR_MonsterSpawner : MonoBehaviour
 
             // 물속 스폰 방지
             if (IsInWater(navHit.position)) continue;
+
+            // 캡슐 형태로 주변 장애물 체크 — 끼임 방지
+            Vector3 capsuleBottom = navHit.position + Vector3.up * clearanceRadius;
+            Vector3 capsuleTop    = navHit.position + Vector3.up * (clearanceHeight - clearanceRadius);
+            if (Physics.CheckCapsule(capsuleBottom, capsuleTop, clearanceRadius,
+                ~0, QueryTriggerInteraction.Ignore)) continue;
 
             Instantiate(monsterPrefab, navHit.position, Quaternion.identity);
             spawned++;

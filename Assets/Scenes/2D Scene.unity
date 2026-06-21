@@ -10074,22 +10074,24 @@ MonoBehaviour:
   audioMixer: {fileID: 0}
   bgmGroup: {fileID: 0}
   sfxGroup: {fileID: 0}
-  bgmClip: {fileID: 8300000, guid: 4559935c00ef8e94b846e2e03e39f0d0, type: 3}
+  bgm_Normal: {fileID: 8300000, guid: aad9f0c7095797044b0f83a95e2ade68, type: 3}
+  bgm_Tension: {fileID: 0}
+  bgm_Horror: {fileID: 8300000, guid: 53c82dfd262804841b9a862f38aa4c9c, type: 3}
   bgmVolume: 0.2
-  sfxClips:
-  - {fileID: 8300000, guid: 291608b8d286e2a4580ff36324455ce2, type: 3}
-  - {fileID: 8300000, guid: 0bddcb411d826e14bb26d40ae45d8e22, type: 3}
-  - {fileID: 8300000, guid: 6b7eaf4532a2f614595ad58d2b86efc4, type: 3}
-  - {fileID: 8300000, guid: 64795b87003c2324fa0814fbc336066c, type: 3}
-  - {fileID: 8300000, guid: c8a3fe17a6641ec48b38fb455a40a223, type: 3}
-  - {fileID: 8300000, guid: 14f24de2a9a70154e96297de25e2184c, type: 3}
-  - {fileID: 8300000, guid: d1bef3102d08ba944ac7bcac65733a26, type: 3}
-  - {fileID: 8300000, guid: 6f0c572d865b4664db7a460972bc4768, type: 3}
-  - {fileID: 8300000, guid: 4b294d59d2399014daa718b35c9de73b, type: 3}
-  - {fileID: 8300000, guid: 2c4bc183a5df5aa4baf7c4fcf236a2de, type: 3}
-  - {fileID: 8300000, guid: 04d56e64576ecc5488c21b38c82628fa, type: 3}
-  - {fileID: 8300000, guid: 2c4bc183a5df5aa4baf7c4fcf236a2de, type: 3}
-  - {fileID: 8300000, guid: 2c4bc183a5df5aa4baf7c4fcf236a2de, type: 3}
+  sfx_Dead: {fileID: 0}
+  sfx_Hit1: {fileID: 8300000, guid: 0bddcb411d826e14bb26d40ae45d8e22, type: 3}
+  sfx_Hit2: {fileID: 8300000, guid: 6b7eaf4532a2f614595ad58d2b86efc4, type: 3}
+  sfx_LevelUp: {fileID: 0}
+  sfx_Lose: {fileID: 8300000, guid: dded389529bf30e49b1b6d7260c80398, type: 3}
+  sfx_Melee1: {fileID: 8300000, guid: 14f24de2a9a70154e96297de25e2184c, type: 3}
+  sfx_Melee2: {fileID: 8300000, guid: d1bef3102d08ba944ac7bcac65733a26, type: 3}
+  sfx_Range: {fileID: 0}
+  sfx_Select: {fileID: 0}
+  sfx_HorrorNoise: {fileID: 8300000, guid: 15cd878c6c001ff46970152da8856672, type: 3}
+  sfx_HorrorStatic: {fileID: 8300000, guid: 29347e464b326b64c9a7ebdb4e0368d6, type: 3}
+  sfx_HorrorJumpscare: {fileID: 8300000, guid: d89deb0bd57ac1e4f8a21e88201b4d01, type: 3}
+  sfx_HorrorPhantomSpawn: {fileID: 8300000, guid: d727e952dbd57a042bf4492090b8a1ab, type: 3}
+  sfx_HorrorMassSpawn: {fileID: 8300000, guid: dcb54d338070db64298c4fa116001e40, type: 3}
   sfxVolume: 0.5
   channels: 16
 --- !u!4 &407902124
@@ -19057,6 +19059,7 @@ GameObject:
   - component: {fileID: 519420034}
   - component: {fileID: 519420035}
   - component: {fileID: 519420036}
+  - component: {fileID: 519420037}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -19341,6 +19344,21 @@ AudioHighPassFilter:
   m_Enabled: 0
   m_CutoffFrequency: 5000
   m_HighpassResonanceQ: 1
+--- !u!114 &519420037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d899ed417a6ed3b4db3f167e2857d241, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraEffect
+  punchAmount: 1.5
+  shakeIntensity: 0.2
+  shakeDuration: 0.5
 --- !u!1 &542247253
 GameObject:
   m_ObjectHideFlags: 0
@@ -38240,14 +38258,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameTime: 0
-  maxGameTime: 300
+  maxGameTime: 120
   isLive: 0
   health: 100
   maxHealth: 100
   level: 0
   kill: 0
   exp: 0
-  nextExp: 0100000002000000030000000400000005000000060000000700000008000000090000000a000000
+  nextExp: 0a0000000f00000019000000230000002d00000037000000410000004b0000005500000064000000
   player: {fileID: 1055480101}
   uilevelUp: {fileID: 1127431170}
   UIResult: {fileID: 655273385}
@@ -38280,14 +38298,135 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7693b382a7ba7ca4ba3b5c996a546099, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HorrorEventManager
-  timeStaticNoise: 5
-  timeEnemyFreeze: 90
-  timeJumpscare: 120
-  timeMassSpawn: 150
-  timeNoiseAndFreeze: 185
-  timeSuddenDeath: 215
-  horrorSpawnCount: 30
-  horrorSpawnSpeed: 4
+  events:
+  - label: "\uD32C\uD140 \uC2A4\uD3F0"
+    type: 0
+    triggerTime: 10
+    jumpscareColor: {r: 1, g: 0, b: 0, a: 1}
+    damagePercent: 0.2
+    phantomCount: 300
+    phantomRadius: 5
+    freezeDuration: 3
+    patternBreakCount: 3
+    massSpawnCount: 30
+    massSpawnSpeed: 4
+    speedBoostMultiplier: 2.5
+    speedBoostDuration: 8
+    inputDuration: 3
+    staticRepeatCount: 4
+    staticRepeatInterval: 0.18
+  - label: "\uC801 \uB3D9\uACB0"
+    type: 2
+    triggerTime: 60
+    jumpscareColor: {r: 1, g: 0, b: 0, a: 1}
+    damagePercent: 0.2
+    phantomCount: 25
+    phantomRadius: 5
+    freezeDuration: 3
+    patternBreakCount: 3
+    massSpawnCount: 30
+    massSpawnSpeed: 4
+    speedBoostMultiplier: 2.5
+    speedBoostDuration: 8
+    inputDuration: 3
+    staticRepeatCount: 4
+    staticRepeatInterval: 0.18
+  - label: "\uC774\uC0C1\uD589\uB3D9"
+    type: 3
+    triggerTime: 68
+    jumpscareColor: {r: 1, g: 0, b: 0, a: 1}
+    damagePercent: 0.2
+    phantomCount: 25
+    phantomRadius: 5
+    freezeDuration: 3
+    patternBreakCount: 3
+    massSpawnCount: 30
+    massSpawnSpeed: 4
+    speedBoostMultiplier: 2.5
+    speedBoostDuration: 8
+    inputDuration: 3
+    staticRepeatCount: 4
+    staticRepeatInterval: 0.18
+  - label: "\uC810\uD504\uC2A4\uCF00\uC5B4"
+    type: 4
+    triggerTime: 75
+    jumpscareColor: {r: 1, g: 0, b: 0, a: 1}
+    damagePercent: 0.2
+    phantomCount: 25
+    phantomRadius: 5
+    freezeDuration: 3
+    patternBreakCount: 3
+    massSpawnCount: 30
+    massSpawnSpeed: 4
+    speedBoostMultiplier: 2.5
+    speedBoostDuration: 8
+    inputDuration: 3
+    staticRepeatCount: 4
+    staticRepeatInterval: 0.18
+  - label: "\uB300\uADDC\uBAA8 \uC2A4\uD3F0"
+    type: 5
+    triggerTime: 90
+    jumpscareColor: {r: 1, g: 0, b: 0, a: 1}
+    damagePercent: 0.2
+    phantomCount: 25
+    phantomRadius: 5
+    freezeDuration: 3
+    patternBreakCount: 3
+    massSpawnCount: 30
+    massSpawnSpeed: 4
+    speedBoostMultiplier: 2.5
+    speedBoostDuration: 8
+    inputDuration: 3
+    staticRepeatCount: 4
+    staticRepeatInterval: 0.18
+  - label: "\uB178\uC774\uC988+\uB3D9\uACB0 \uCF64\uBCF4"
+    type: 6
+    triggerTime: 105
+    jumpscareColor: {r: 1, g: 0, b: 0, a: 1}
+    damagePercent: 0.2
+    phantomCount: 25
+    phantomRadius: 5
+    freezeDuration: 4
+    patternBreakCount: 3
+    massSpawnCount: 20
+    massSpawnSpeed: 4
+    speedBoostMultiplier: 2.5
+    speedBoostDuration: 8
+    inputDuration: 3
+    staticRepeatCount: 4
+    staticRepeatInterval: 0.18
+  - label: "\uAC15\uC81C \uC0AC\uB9DD"
+    type: 7
+    triggerTime: 118
+    jumpscareColor: {r: 1, g: 0, b: 0, a: 1}
+    damagePercent: 0.2
+    phantomCount: 25
+    phantomRadius: 5
+    freezeDuration: 3
+    patternBreakCount: 3
+    massSpawnCount: 30
+    massSpawnSpeed: 4
+    speedBoostMultiplier: 2.5
+    speedBoostDuration: 8
+    inputDuration: 3
+    staticRepeatCount: 4
+    staticRepeatInterval: 0.18
+  - label: "\uB178\uC774\uC988"
+    type: 1
+    triggerTime: 5
+    jumpscareColor: {r: 1, g: 0, b: 0, a: 1}
+    damagePercent: 0.2
+    phantomCount: 25
+    phantomRadius: 5
+    freezeDuration: 3
+    patternBreakCount: 3
+    massSpawnCount: 30
+    massSpawnSpeed: 4
+    speedBoostMultiplier: 2.5
+    speedBoostDuration: 8
+    inputDuration: 3
+    staticRepeatCount: 4
+    staticRepeatInterval: 0.18
   screenOverlay: {fileID: 1814823607}
 --- !u!1 &1049093410
 GameObject:
@@ -62174,26 +62313,27 @@ MonoBehaviour:
   spawnPoints: []
   spawnData:
   - spriteType: 0
-    spawnTime: 1.5
-    spawnCount: 1
-    health: 15
+    spawnTime: 0.5
+    spawnCount: 5
+    health: 6
     speed: 1.5
   - spriteType: 1
-    spawnTime: 1.2
-    spawnCount: 2
-    health: 20
+    spawnTime: 1
+    spawnCount: 5
+    health: 12
     speed: 2.5
   - spriteType: 2
     spawnTime: 1
-    spawnCount: 3
-    health: 30
-    speed: 3.5
+    spawnCount: 5
+    health: 24
+    speed: 3
   - spriteType: 3
     spawnTime: 0.8
-    spawnCount: 4
-    health: 35
-    speed: 4
-  levelTime: 0
+    spawnCount: 5
+    health: 36
+    speed: 2
+  minSpawnInterval: 0.3
+  maxSpawnInterval: 1.5
 --- !u!1 &1673922356
 GameObject:
   m_ObjectHideFlags: 0
@@ -67273,7 +67413,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0}
+  m_Color: {r: 1, g: 0, b: 0, a: 0}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
