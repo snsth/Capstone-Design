@@ -17,27 +17,35 @@ public class SubtitleManager : MonoBehaviour
 
     private void ShowIntroSubtitle()
     {
-        StartCoroutine(ShowSubtitleRoutine());
+        string[] introLines =
+        {
+            "???",
+            "뭐야 이거 고장났나?",
+            "......",
+            "그만할래",
+            "밥 먹고 수영장이나 가야지"
+        };
+
+        ShowSubtitle(introLines);
     }
 
-    IEnumerator ShowSubtitleRoutine()
+    /// <summary>
+    /// 외부에서 호출하는 함수
+    /// </summary>
+    public void ShowSubtitle(string[] lines)
+    {
+        StartCoroutine(ShowSubtitleRoutine(lines));
+    }
+
+    private IEnumerator ShowSubtitleRoutine(string[] lines)
     {
         subtitleText.gameObject.SetActive(true);
 
-        subtitleText.text = "???";
-        yield return new WaitForSeconds(2f);
-
-        subtitleText.text = "뭐야 이거 고장났나?";
-        yield return new WaitForSeconds(2f);
-
-        subtitleText.text = "......";
-        yield return new WaitForSeconds(2f);
-
-        subtitleText.text = "그만할래";
-        yield return new WaitForSeconds(1.5f);
-
-        subtitleText.text = "밥 먹고 수영장이나 가야지";
-        yield return new WaitForSeconds(2f);
+        foreach (string line in lines)
+        {
+            subtitleText.text = line;
+            yield return new WaitForSeconds(2f);
+        }
 
         subtitleText.gameObject.SetActive(false);
     }

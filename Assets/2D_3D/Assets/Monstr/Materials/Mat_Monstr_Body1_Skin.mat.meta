@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: dd324c581cd02f44bbfc7a052e94ac16
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 212658
+  packageName: Monstr1
+  packageVersion: 1.0
+  assetPath: Assets/Monstr/Materials/Mat_Monstr_Body1_Skin.mat
+  uploadId: 478317

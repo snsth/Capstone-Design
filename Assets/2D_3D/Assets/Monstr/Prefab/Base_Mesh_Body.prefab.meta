@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 95555302fd0bdd64e8fa9d77f8a51f71
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 212658
+  packageName: Monstr1
+  packageVersion: 1.0
+  assetPath: Assets/Monstr/Prefab/Base_Mesh_Body.prefab
+  uploadId: 478317
