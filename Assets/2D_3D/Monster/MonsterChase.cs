@@ -24,9 +24,13 @@ public class MonsterChase : MonoBehaviour
         if (player == null)
             return;
 
+        if (agent == null)
+            return;
+
         if (!agent.isOnNavMesh)
             return;
 
         agent.SetDestination(player.position);
+        
     }
 }
