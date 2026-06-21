@@ -46,8 +46,10 @@ public class BR_PlayerController : MonoBehaviour
 
     bool onLadder;
     int waterCount;
+    int oceanCount;
     float waterSurfaceY;
     bool submerged;
+    public bool IsSubmerged => submerged;
     float currentAir;
     float footstepTimer;
 
@@ -144,7 +146,8 @@ public class BR_PlayerController : MonoBehaviour
         float z = Input.GetAxisRaw("Vertical");
         Vector3 move = (transform.right * x + transform.forward * z).normalized * swimSpeed;
 
-        if (Input.GetKey(KeyCode.Space)) move.y += swimSpeed;
+        bool inOcean = oceanCount > 0;
+        if (!inOcean && Input.GetKey(KeyCode.Space)) move.y += swimSpeed;
         else if (Input.GetKey(KeyCode.LeftControl)) move.y -= swimSpeed;
         else if (!submerged) move.y -= 1f;
 
@@ -213,8 +216,11 @@ public class BR_PlayerController : MonoBehaviour
             currentAir = Mathf.Max(0f, currentAir - airDrainPerSecond * Time.deltaTime);
             if (currentAir <= 0f)
             {
-                UnityEngine.SceneManagement.SceneManager.LoadScene(
-                    UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+                if (oceanCount > 0)
+                    Application.Quit();
+                else
+                    UnityEngine.SceneManagement.SceneManager.LoadScene(
+                        UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
                 return;
             }
         }
@@ -274,6 +280,7 @@ public class BR_PlayerController : MonoBehaviour
         {
             if (waterCount == 0) BR_SoundManager.Instance?.PlayWaterEntry();
             waterCount++;
+            oceanCount++;
             waterSurfaceY = ocean.SurfaceY;
         }
         if (other.gameObject.name.StartsWith("Railing_sideWall"))
@@ -282,8 +289,13 @@ public class BR_PlayerController : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        if (other.TryGetComponent<BR_WaterZone>(out _) || other.TryGetComponent<BR_OceanZone>(out _))
+        if (other.TryGetComponent<BR_WaterZone>(out _))
             waterCount = Mathf.Max(0, waterCount - 1);
+        else if (other.TryGetComponent<BR_OceanZone>(out _))
+        {
+            waterCount = Mathf.Max(0, waterCount - 1);
+            oceanCount = Mathf.Max(0, oceanCount - 1);
+        }
         if (other.gameObject.name.StartsWith("Railing_sideWall"))
             onLadder = false;
     }

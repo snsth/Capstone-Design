@@ -6,7 +6,7 @@ public class BR_FluorescentFlicker : MonoBehaviour
 {
     [Header("자동 탐색 키워드")]
     public string[] rendererObjectNames = { "archway_corner", "Ceiling_light", "Wall_light" };
-    public string[] lightObjectNames    = { "Point Light" };
+    public string[] lightObjectNames    = { "Point Light", "Light", "Light 2" };
 
     [Tooltip("-1 이면 모든 머티리얼, 특정 번호 지정 시 해당 머티리얼만 Emission 조절")]
     public int emissiveMaterialIndex = -1;
@@ -25,22 +25,25 @@ public class BR_FluorescentFlicker : MonoBehaviour
     public float minOnTime  = 0.04f;
     public float maxOnTime  = 0.12f;
 
+    [Header("페어링")]
+    [Tooltip("렌더러 주변 이 거리 안의 Point Light를 같이 깜빡임")]
+    public float maxPairDistance = 8f;
+
     [Header("암전")]
-    public float blackoutMinInterval   = 20f;
-    public float blackoutMaxInterval   = 60f;
-    public float blackoutMinDuration   = 3f;
-    public float blackoutMaxDuration   = 5f;
+    public float blackoutMinInterval = 20f;
+    public float blackoutMaxInterval = 60f;
+    public float blackoutMinDuration = 3f;
+    public float blackoutMaxDuration = 5f;
 
     static readonly int HDRPEmission    = Shader.PropertyToID("_EmissiveColor");
     static readonly int BuiltinEmission = Shader.PropertyToID("_EmissionColor");
 
     class FlickerUnit
     {
-        public Light light;
+        public List<Light> lights = new();
         public Renderer renderer;
         public Material[] mats;
         public Color[] savedEmission;
-        public bool blackedOut;
     }
 
     List<FlickerUnit> units = new();
@@ -56,21 +59,33 @@ public class BR_FluorescentFlicker : MonoBehaviour
 
     void BuildUnits()
     {
-        var renderers = new List<Renderer>();
-        var lights    = new List<Light>();
+        var allRenderers = new List<Renderer>();
+        var allLights    = new List<Light>();
 
         foreach (var r in FindObjectsOfType<Renderer>(true))
             foreach (var kw in rendererObjectNames)
-                if (r.gameObject.name.IndexOf(kw, System.StringComparison.OrdinalIgnoreCase) >= 0) { renderers.Add(r); break; }
+                if (r.gameObject.name.IndexOf(kw, System.StringComparison.OrdinalIgnoreCase) >= 0)
+                { allRenderers.Add(r); break; }
 
         foreach (var l in FindObjectsOfType<Light>(true))
-            foreach (var kw in lightObjectNames)
-                if (l.gameObject.name.IndexOf(kw, System.StringComparison.OrdinalIgnoreCase) >= 0) { lights.Add(l); break; }
+        {
+            Transform t = l.transform;
+            bool added = false;
+            while (t != null && !added)
+            {
+                foreach (var kw in lightObjectNames)
+                {
+                    if (t.gameObject.name.IndexOf(kw, System.StringComparison.OrdinalIgnoreCase) >= 0)
+                    { allLights.Add(l); added = true; break; }
+                }
+                t = t.parent;
+            }
+        }
 
         var pairedLights = new HashSet<Light>();
 
-        // Renderer 기준으로 유닛 생성 — 가장 가까운 Point Light와 페어링
-        foreach (var r in renderers)
+        // 렌더러마다 유닛 생성 — maxPairDistance 안의 라이트를 전부 페어링
+        foreach (var r in allRenderers)
         {
             var unit = new FlickerUnit { renderer = r };
             var mats = r.materials;
@@ -87,34 +102,29 @@ public class BR_FluorescentFlicker : MonoBehaviour
                     unit.savedEmission[i] = mats[i].GetColor(BuiltinEmission);
             }
 
-            // 가장 가까운 미페어링 Point Light 찾기
-            Light nearest = null;
-            float nearestDist = float.MaxValue;
-            foreach (var l in lights)
+            // 거리 안의 모든 라이트 추가 (이미 페어링된 라이트 포함 — 여러 형광등이 같은 라이트 공유 가능)
+            foreach (var l in allLights)
             {
-                if (pairedLights.Contains(l)) continue;
-                float d = Vector3.Distance(r.transform.position, l.transform.position);
-                if (d < nearestDist) { nearestDist = d; nearest = l; }
-            }
-            if (nearest != null)
-            {
-                unit.light = nearest;
-                pairedLights.Add(nearest);
+                if (Vector3.Distance(r.transform.position, l.transform.position) <= maxPairDistance)
+                {
+                    unit.lights.Add(l);
+                    pairedLights.Add(l);
+                }
             }
 
             units.Add(unit);
         }
 
-        // 페어링 안 된 남은 Light는 단독 유닛으로 추가
-        foreach (var l in lights)
+        // 어떤 렌더러와도 페어링 안 된 라이트는 단독 유닛으로 추가
+        foreach (var l in allLights)
             if (!pairedLights.Contains(l))
-                units.Add(new FlickerUnit { light = l });
+                units.Add(new FlickerUnit { lights = new List<Light> { l } });
     }
 
     void SetUnit(FlickerUnit unit, bool on)
     {
-        if (unit.light != null)
-            unit.light.enabled = on;
+        foreach (var l in unit.lights)
+            if (l != null) l.enabled = on;
 
         if (unit.renderer != null && unit.mats != null)
         {
@@ -133,7 +143,6 @@ public class BR_FluorescentFlicker : MonoBehaviour
 
     IEnumerator UnitFlickerLoop(FlickerUnit unit)
     {
-        // 시작 타이밍 분산
         yield return new WaitForSeconds(Random.Range(0f, maxStableTime));
 
         while (true)
@@ -160,7 +169,6 @@ public class BR_FluorescentFlicker : MonoBehaviour
         {
             yield return new WaitForSeconds(Random.Range(blackoutMinInterval, blackoutMaxInterval));
 
-            // 씬의 모든 라이트 수집 후 전부 끔
             var allLights = FindObjectsOfType<Light>(true);
             var wasEnabled = new bool[allLights.Length];
             for (int i = 0; i < allLights.Length; i++)
@@ -174,7 +182,6 @@ public class BR_FluorescentFlicker : MonoBehaviour
 
             yield return new WaitForSeconds(Random.Range(blackoutMinDuration, blackoutMaxDuration));
 
-            // 원래 상태로 복구
             for (int i = 0; i < allLights.Length; i++)
                 allLights[i].enabled = wasEnabled[i];
 

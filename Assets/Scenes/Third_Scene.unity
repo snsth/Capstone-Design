@@ -1249,6 +1249,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224275731}
   - component: {fileID: 224275730}
+  - component: {fileID: 224275732}
   m_Layer: 0
   m_Name: Ocean
   m_TagString: Untagged
@@ -1412,8 +1413,8 @@ MonoBehaviour:
   waterFoamDebugMode: 0
   underWater: 1
   volumeBounds: {fileID: 0}
-  volumeDepth: 50
-  volumeHeight: 238.7
+  volumeDepth: 1000
+  volumeHeight: 1000
   volumePrority: 0
   absorptionDistanceMultiplier: 1
   underWaterAmbientProbeContribution: 1
@@ -1437,6 +1438,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1547400463}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &224275732
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 224275729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d64c0753334cd524188f55b50b136c45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BR_OceanZone
+  horizontalExtent: 5000
+  depth: 300
+  floorDepth: 50
 --- !u!1 &236663857
 GameObject:
   m_ObjectHideFlags: 0
@@ -2509,11 +2525,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3766281748632068820, guid: 6e9ff403aed784645912843154b64ef7, type: 3}
   m_PrefabInstance: {fileID: 387592629}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &421058789 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1719486135219770351, guid: a9a8f53892f247a45af19845af682309, type: 3}
-  m_PrefabInstance: {fileID: 1568060078}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &459832813
 GameObject:
   m_ObjectHideFlags: 0
@@ -2965,31 +2976,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4210929927539615804, guid: 07f6f25284c4ce9478e369b64999280a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 33.35
+      value: 8.742394
       objectReference: {fileID: 0}
     - target: {fileID: 4210929927539615804, guid: 07f6f25284c4ce9478e369b64999280a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 238.73
+      value: 220.54831
       objectReference: {fileID: 0}
     - target: {fileID: 4210929927539615804, guid: 07f6f25284c4ce9478e369b64999280a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 13.52
+      value: 47.27421
       objectReference: {fileID: 0}
     - target: {fileID: 4210929927539615804, guid: 07f6f25284c4ce9478e369b64999280a, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: -0.8557324
       objectReference: {fileID: 0}
     - target: {fileID: 4210929927539615804, guid: 07f6f25284c4ce9478e369b64999280a, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: 0.0009703161
       objectReference: {fileID: 0}
     - target: {fileID: 4210929927539615804, guid: 07f6f25284c4ce9478e369b64999280a, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0.51741725
       objectReference: {fileID: 0}
     - target: {fileID: 4210929927539615804, guid: 07f6f25284c4ce9478e369b64999280a, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0.0006965603
       objectReference: {fileID: 0}
     - target: {fileID: 4210929927539615804, guid: 07f6f25284c4ce9478e369b64999280a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3148,11 +3159,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09ccafc57a6c6fe439bcf308617884a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BR_FlashlightController
-  range: 120
-  spotAngle: 120
-  innerSpotAngle: 90
-  intensity: 20
-  lightColor: {r: 1, g: 0.97, b: 0.92, a: 1}
+  spotLight: {fileID: 0}
 --- !u!1 &502679434
 GameObject:
   m_ObjectHideFlags: 0
@@ -3693,25 +3700,7 @@ MonoBehaviour:
   m_Script: {fileID: 861953960}
   m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.HighDefinition.Runtime::UnityEngine.Rendering.HighDefinition.SceneObjectIDMapSceneAsset
-  m_Entries:
-  - id: 0
-    category: 0
-    gameObject: {fileID: 1864712485}
-  - id: 1
-    category: 0
-    gameObject: {fileID: 1864712486}
-  - id: 2
-    category: 0
-    gameObject: {fileID: 1449456832}
-  - id: 3
-    category: 0
-    gameObject: {fileID: 421058789}
-  - id: 4
-    category: 0
-    gameObject: {fileID: 793793714}
-  - id: 5
-    category: 0
-    gameObject: {fileID: 1859115617}
+  m_Entries: []
 --- !u!4 &631243654
 Transform:
   m_ObjectHideFlags: 19
@@ -4565,11 +4554,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6138927603817682892, guid: 550c3829d3c9b3b4bb1faca601603a7a, type: 3}
   m_PrefabInstance: {fileID: 709718644}
   m_PrefabAsset: {fileID: 0}
---- !u!23 &744138593 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 5836195153135144341, guid: a9a8f53892f247a45af19845af682309, type: 3}
-  m_PrefabInstance: {fileID: 1568060078}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &766215478 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6514630735293970045, guid: a9a8f53892f247a45af19845af682309, type: 3}
@@ -4822,11 +4806,6 @@ Transform:
 --- !u!4 &788432558 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1219207869179047428, guid: a9a8f53892f247a45af19845af682309, type: 3}
-  m_PrefabInstance: {fileID: 1509403390}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &793793714 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3693832037208950225, guid: a9a8f53892f247a45af19845af682309, type: 3}
   m_PrefabInstance: {fileID: 1509403390}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &806268221
@@ -7201,11 +7180,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5684976063189001152, guid: a9a8f53892f247a45af19845af682309, type: 3}
   m_PrefabInstance: {fileID: 1568060078}
   m_PrefabAsset: {fileID: 0}
---- !u!23 &1256074611 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 6189612660734362133, guid: a9a8f53892f247a45af19845af682309, type: 3}
-  m_PrefabInstance: {fileID: 1568060078}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1256074613
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7218,8 +7192,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dee3e86e4dc5ca418782817470aad28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BR_FluorescentFlicker
-  lights: []
-  targetRenderers: []
   rendererObjectNames:
   - archway_corner
   - Ceiling_light
@@ -7235,6 +7207,11 @@ MonoBehaviour:
   maxOffTime: 0.15
   minOnTime: 0.04
   maxOnTime: 0.12
+  maxPairDistance: 8
+  blackoutMinInterval: 20
+  blackoutMaxInterval: 60
+  blackoutMinDuration: 3
+  blackoutMaxDuration: 5
 --- !u!1 &1258038001
 GameObject:
   m_ObjectHideFlags: 0
@@ -7347,11 +7324,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1258038001}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!108 &1268688327 stripped
-Light:
-  m_CorrespondingSourceObject: {fileID: 4709757656451907437, guid: a9a8f53892f247a45af19845af682309, type: 3}
-  m_PrefabInstance: {fileID: 1568060078}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1288871842
 GameObject:
   m_ObjectHideFlags: 0
@@ -8115,11 +8087,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1444032948}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1449456832 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1719486135219770351, guid: a9a8f53892f247a45af19845af682309, type: 3}
-  m_PrefabInstance: {fileID: 1509403390}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1457577114
 GameObject:
   m_ObjectHideFlags: 0
@@ -9309,7 +9276,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5613962889345783853, guid: a9a8f53892f247a45af19845af682309, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 6.90827
+      value: 6.908228
       objectReference: {fileID: 0}
     - target: {fileID: 5623738533350257619, guid: a9a8f53892f247a45af19845af682309, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
@@ -9469,7 +9436,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9080338873931619399, guid: a9a8f53892f247a45af19845af682309, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 16.47646
+      value: 16.476439
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -9778,12 +9745,13 @@ GameObject:
   - component: {fileID: 1653806255}
   - component: {fileID: 1653806254}
   - component: {fileID: 1653806253}
+  - component: {fileID: 1653806256}
   m_Layer: 0
   m_Name: Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &1653806252
 Transform:
@@ -9878,6 +9846,28 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1653806251}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1653806256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1653806251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c30611453f2a61e4399b6190ecb224cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BR_Door
+  requiredItemId: key_01
+  requiredItemName: "\uC5F4\uC1E0"
+  consumeItem: 1
+  isExitDoor: 0
+  nextSceneName: 
+  targetTransform: {fileID: 1653806252}
+  slideDirection: 0
+  slideDistance: 0
+  openSpeed: 2
+  customSlideAxis: {x: 0, y: 1, z: 0}
 --- !u!1 &1671465138
 GameObject:
   m_ObjectHideFlags: 0
@@ -10281,11 +10271,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09ccafc57a6c6fe439bcf308617884a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BR_FlashlightController
-  range: 20
-  spotAngle: 50
-  innerSpotAngle: 20
-  intensity: 150000
-  lightColor: {r: 1, g: 0.97, b: 0.92, a: 1}
+  spotLight: {fileID: 0}
 --- !u!1 &1723116117
 GameObject:
   m_ObjectHideFlags: 0
@@ -10594,11 +10580,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!108 &1778626241 stripped
-Light:
-  m_CorrespondingSourceObject: {fileID: 1581657914471459041, guid: a9a8f53892f247a45af19845af682309, type: 3}
-  m_PrefabInstance: {fileID: 1568060078}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1797898151
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11138,11 +11119,6 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 6138927603817682892, guid: 550c3829d3c9b3b4bb1faca601603a7a, type: 3}
   m_PrefabInstance: {fileID: 1852644485}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1859115617 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3693832037208950225, guid: a9a8f53892f247a45af19845af682309, type: 3}
-  m_PrefabInstance: {fileID: 1568060078}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1864712484
 PrefabInstance:
@@ -12029,68 +12005,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dee3e86e4dc5ca418782817470aad28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BR_FluorescentFlicker
-  lights:
-  - {fileID: 2107778066}
-  - {fileID: 1268688327}
-  - {fileID: 1778626241}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  - {fileID: 2107778066}
-  targetRenderers:
-  - {fileID: 744138593}
-  - {fileID: 2123811866}
-  - {fileID: 1256074611}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   rendererObjectNames:
   - archway_corner
   - Ceiling_light
@@ -12106,6 +12020,11 @@ MonoBehaviour:
   maxOffTime: 0.15
   minOnTime: 0.04
   maxOnTime: 0.12
+  maxPairDistance: 8
+  blackoutMinInterval: 20
+  blackoutMaxInterval: 60
+  blackoutMinDuration: 3
+  blackoutMaxDuration: 5
 --- !u!4 &1925253781
 Transform:
   m_ObjectHideFlags: 0
@@ -12966,16 +12885,6 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
---- !u!108 &2107778066 stripped
-Light:
-  m_CorrespondingSourceObject: {fileID: 4850964341153943660, guid: a9a8f53892f247a45af19845af682309, type: 3}
-  m_PrefabInstance: {fileID: 1568060078}
-  m_PrefabAsset: {fileID: 0}
---- !u!23 &2123811866 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 3214787114267669444, guid: a9a8f53892f247a45af19845af682309, type: 3}
-  m_PrefabInstance: {fileID: 1568060078}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2134021362
 PrefabInstance:
   m_ObjectHideFlags: 0
