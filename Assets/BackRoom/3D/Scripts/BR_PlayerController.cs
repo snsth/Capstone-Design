@@ -113,7 +113,6 @@ public class BR_PlayerController : MonoBehaviour
         if (onLadder) { LadderMove(); return; }
 
         bool inWater = waterCount > 0;
-        // 0.15m margin: air only drains when camera is clearly below the surface
         submerged = inWater && cameraTransform != null && cameraTransform.position.y < waterSurfaceY - 0.15f;
 
         if (inWater) SwimMove();
@@ -211,7 +210,7 @@ public class BR_PlayerController : MonoBehaviour
     {
         if (submerged)
             currentAir = Mathf.Max(0f, currentAir - airDrainPerSecond * Time.deltaTime);
-        else if (currentAir < maxAir)
+        else if (!inWater && currentAir < maxAir)
             currentAir = Mathf.Min(maxAir, currentAir + airRegenPerSecond * Time.deltaTime);
     }
 
