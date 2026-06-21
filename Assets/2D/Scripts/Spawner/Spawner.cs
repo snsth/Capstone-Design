@@ -2,80 +2,97 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// 일정 시간마다 적을 스폰하는 스포너.
-/// 자식 오브젝트의 Transform을 스폰 포인트로 사용하며,
-/// PoolManager를 통해 오브젝트 풀에서 적을 꺼내 배치한다.
-/// </summary>
+
 public class Spawner : MonoBehaviour
 {
-    /// <summary>
-    /// 적이 등장할 수 있는 스폰 포인트 목록.
-    /// Awake에서 자식 Transform을 자동으로 수집한다.
-    /// </summary>
     public Transform[] spawnPoints;
-    public SpawnData[]  spawnData;
-    public float levelTime;
-    /// <summary>
-    /// 스폰 간격을 측정하기 위한 타이머 (초 단위).
-    /// </summary>
-    float timer;
+    public SpawnData[] spawnData;
 
-    int level;
-    
+    [Header("# 무작위 스폰 간격 (초)")]
+    public float minSpawnInterval = 0.3f;
+    public float maxSpawnInterval = 1.5f;
+
+    float timer;
+    float nextSpawnTime;
 
     void Awake()
     {
-        // 이 오브젝트의 모든 자식 Transform을 스폰 포인트로 등록
-        // 인덱스 0은 자기 자신(부모)이므로 Spawn()에서 1부터 사용
         spawnPoints = GetComponentsInChildren<Transform>();
-        levelTime = Gamemanager.instance.maxGameTime / spawnData.Length;
+        nextSpawnTime = Random.Range(minSpawnInterval, maxSpawnInterval);
     }
 
     void Update()
     {
-        if (Gamemanager.instance.isLive == false) return;
-        timer += Time.deltaTime;
-        level = Mathf.Min(Mathf.FloorToInt(Gamemanager.instance.gameTime / levelTime), spawnData.Length - 1);
+        if (!Gamemanager.instance.isLive) return;
 
-        // 0.5초마다 적 스폰
-        if (timer > (spawnData[level].spawnTime))
+        timer += Time.deltaTime;
+
+        if (timer >= nextSpawnTime)
         {
             Spawn();
-            timer = 0;
+            timer = 0f;
+            nextSpawnTime = Random.Range(minSpawnInterval, maxSpawnInterval);
         }
     }
 
     void Spawn()
     {
-        for (int i = 0; i < spawnData[level].spawnCount; i++)
+        SpawnData data = spawnData[Random.Range(0, spawnData.Length)];
+
+        for (int i = 0; i < data.spawnCount; i++)
         {
             GameObject enemy = Gamemanager.instance.pool.Get(0);
             enemy.transform.position = spawnPoints[Random.Range(1, spawnPoints.Length)].position;
-            enemy.GetComponent<EnemyMovement>().Init(spawnData[level]);
+            enemy.GetComponent<EnemyMovement>().Init(data);
         }
     }
 
-    // 공포 이벤트: 지정한 수만큼 빠른 적을 한꺼번에 쏟아냄
-    public void SpawnHorrorWave(int count, float speedOverride)
+    // 팬텀 스폰: 플레이어 주변 원형 범위에 적을 소환하고 목록 반환 (호출자가 나중에 비활성화)
+    public List<GameObject> SpawnPhantomWave(int count, float radius)
     {
-        SpawnData horrorData = new SpawnData
-        {
-            spriteType = spawnData[level].spriteType,
-            spawnTime  = 0,
-            spawnCount = 1,
-            health     = spawnData[level].health,
-            speed      = speedOverride
-        };
+        List<GameObject> phantoms = new List<GameObject>();
+        Vector3 playerPos = Gamemanager.instance.player.transform.position;
 
         for (int i = 0; i < count; i++)
         {
+            SpawnData data = spawnData[Random.Range(0, spawnData.Length)];
+
+            // 플레이어 주변 원형 범위 내 랜덤 위치 (너무 가까이 붙지 않도록 0.5~1.0 반경 사용)
+            Vector2 dir = Random.insideUnitCircle.normalized;
+            float dist = Random.Range(radius * 0.5f, radius);
+            Vector3 pos = playerPos + new Vector3(dir.x * dist, dir.y * dist, 0f);
+
+            GameObject enemy = Gamemanager.instance.pool.Get(0);
+            enemy.transform.position = pos;
+            enemy.GetComponent<EnemyMovement>().Init(data);
+            phantoms.Add(enemy);
+        }
+
+        return phantoms;
+    }
+
+    // 공포 이벤트: 지정한 수만큼 랜덤 적을 한꺼번에 쏟아냄
+    public void SpawnHorrorWave(int count, float speedOverride)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            SpawnData data = spawnData[Random.Range(0, spawnData.Length)];
+            SpawnData horrorData = new SpawnData
+            {
+                spriteType = data.spriteType,
+                spawnTime  = 0,
+                spawnCount = 1,
+                health     = data.health,
+                speed      = speedOverride
+            };
+
             GameObject enemy = Gamemanager.instance.pool.Get(0);
             enemy.transform.position = spawnPoints[Random.Range(1, spawnPoints.Length)].position;
             enemy.GetComponent<EnemyMovement>().Init(horrorData);
         }
     }
 }
+
 [System.Serializable]
 public class SpawnData
 {
@@ -84,5 +101,4 @@ public class SpawnData
     public int spawnCount;
     public int health;
     public float speed;
-
 }
