@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
+using UnityEngine.SceneManagement;
 
 public class BR_PostProcessing : MonoBehaviour
 {
@@ -37,6 +38,7 @@ public class BR_PostProcessing : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
         BuildVolume();
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     void BuildVolume()
@@ -76,6 +78,8 @@ public class BR_PostProcessing : MonoBehaviour
     }
 
     public void ResetToBase() => ApplyBase();
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode) => ApplyBase();
 
     // 익사 — 서서히 어두워지며 씬 리로드
     public void TriggerDrowningEffect(float fadeDuration = 2.5f)
