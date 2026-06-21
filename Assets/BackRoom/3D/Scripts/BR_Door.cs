@@ -96,6 +96,7 @@ public class BR_Door : MonoBehaviour
 
         // 모든 몬스터 시야 감지 해제 → 무조건 추격
         BR_Monster.alwaysChase = true;
+        BR_PostProcessing.Instance?.TriggerChaseEffect();
 
         BR_SoundManager.Instance?.PlayZombieScream();
 

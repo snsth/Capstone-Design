@@ -81,6 +81,12 @@ public class BR_PostProcessing : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode) => ApplyBase();
 
+    // 추격씬 — 화면을 붉게 물들임
+    public void TriggerChaseEffect(float fadeDuration = 1.5f)
+    {
+        StartCoroutine(ChaseRoutine(fadeDuration));
+    }
+
     // 익사 — 서서히 어두워지며 씬 리로드
     public void TriggerDrowningEffect(float fadeDuration = 2.5f)
     {
@@ -102,6 +108,25 @@ public class BR_PostProcessing : MonoBehaviour
     }
 
     // ─── 코루틴 ──────────────────────────────────────────────────
+
+    IEnumerator ChaseRoutine(float dur)
+    {
+        colorAdj.active  = true;
+        vignette.active  = true;
+        filmGrain.active = true;
+
+        float t = 0f;
+        while (t < dur)
+        {
+            t += Time.deltaTime;
+            float p = Mathf.Clamp01(t / dur);
+            colorAdj.colorFilter.Override(Color.Lerp(Color.white, new Color(0.85f, 0.1f, 0.1f), p));
+            colorAdj.postExposure.Override(Mathf.Lerp(0f, -0.6f, p));
+            vignette.intensity.Override(Mathf.Lerp(0f, 0.45f, p));
+            filmGrain.intensity.Override(Mathf.Lerp(0f, 0.25f, p));
+            yield return null;
+        }
+    }
 
     IEnumerator DrowningRoutine(float dur)
     {
