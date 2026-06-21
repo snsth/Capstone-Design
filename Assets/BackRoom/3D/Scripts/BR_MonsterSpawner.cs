@@ -39,22 +39,28 @@ public class BR_MonsterSpawner : MonoBehaviour
             if (Vector3.Distance(candidate, playerPos) < minDistFromPlayer) continue;
 
             // NavMesh 위 유효 지점 찾기
-            if (NavMesh.SamplePosition(candidate, out NavMeshHit navHit, 3f, NavMesh.AllAreas))
-            {
-                Instantiate(monsterPrefab, navHit.position, Quaternion.identity);
-                spawned++;
-            }
-            else
-            {
-                // NavMesh 없을 때 fallback: Y는 스폰너 높이 사용
-                candidate.y = transform.position.y;
-                Instantiate(monsterPrefab, candidate, Quaternion.identity);
-                spawned++;
-            }
+            if (!NavMesh.SamplePosition(candidate, out NavMeshHit navHit, 3f, NavMesh.AllAreas)) continue;
+
+            // 물속 스폰 방지
+            if (IsInWater(navHit.position)) continue;
+
+            Instantiate(monsterPrefab, navHit.position, Quaternion.identity);
+            spawned++;
         }
 
         if (spawned < spawnCount)
             Debug.LogWarning($"[BR_MonsterSpawner] 목표 {spawnCount}마리 중 {spawned}마리만 스폰됨. NavMesh 베이킹 확인 권장.");
+    }
+
+    bool IsInWater(Vector3 pos)
+    {
+        var cols = Physics.OverlapSphere(pos, 0.5f, ~0, QueryTriggerInteraction.Collide);
+        foreach (var col in cols)
+        {
+            if (col.GetComponent<BR_WaterZone>() != null) return true;
+            if (col.GetComponent<BR_OceanZone>() != null) return true;
+        }
+        return false;
     }
 
     void OnDrawGizmosSelected()

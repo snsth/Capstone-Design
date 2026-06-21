@@ -376,13 +376,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a436559c2bc2a442bcddbd6eda4532f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BR_Monster
-  viewHalfAngle: 55
-  detectionRange: 30
-  obstacleMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
+  detectionRange: 100000
   moveSpeed: 4
+  chaseRange: 500
   killDistance: 1.5
+  animator: {fileID: 0}
+  walkStateName: walking
 --- !u!1 &2504964201861980850
 GameObject:
   m_ObjectHideFlags: 0

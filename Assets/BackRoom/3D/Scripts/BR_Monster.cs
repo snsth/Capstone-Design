@@ -13,7 +13,7 @@ public class BR_Monster : MonoBehaviour
     [Header("이동")]
     public float moveSpeed = 4f;
     [Tooltip("이 거리 이내로 플레이어가 접근하면 추격 시작")]
-    public float chaseRange = 30f;
+    public float chaseRange = 500f;
     [Tooltip("이 거리 이하로 접근하면 플레이어 사망")]
     public float killDistance = 1.5f;
 
@@ -74,15 +74,11 @@ public class BR_Monster : MonoBehaviour
         {
             bool inChaseRange = Vector3.Distance(transform.position, player.position) <= chaseRange;
 
-            if (inChaseRange && agent.isOnNavMesh)
+            if (agent.isOnNavMesh)
             {
-                agent.isStopped = false;
-                agent.SetDestination(player.position);
-            }
-            else if (!inChaseRange && agent.isOnNavMesh)
-            {
-                agent.isStopped = true;
-                agent.velocity = Vector3.zero;
+                agent.isStopped = !inChaseRange;
+                if (inChaseRange) agent.SetDestination(player.position);
+                else agent.velocity = Vector3.zero;
             }
 
             if (animator != null)
