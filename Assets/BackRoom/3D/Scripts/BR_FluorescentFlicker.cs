@@ -26,9 +26,10 @@ public class BR_FluorescentFlicker : MonoBehaviour
     public float maxOnTime  = 0.12f;
 
     [Header("암전")]
-    public float blackoutMinInterval = 20f;
-    public float blackoutMaxInterval = 60f;
-    public float blackoutDuration    = 3f;
+    public float blackoutMinInterval   = 20f;
+    public float blackoutMaxInterval   = 60f;
+    public float blackoutMinDuration   = 3f;
+    public float blackoutMaxDuration   = 5f;
 
     static readonly int HDRPEmission    = Shader.PropertyToID("_EmissiveColor");
     static readonly int BuiltinEmission = Shader.PropertyToID("_EmissionColor");
@@ -60,11 +61,11 @@ public class BR_FluorescentFlicker : MonoBehaviour
 
         foreach (var r in FindObjectsOfType<Renderer>(true))
             foreach (var kw in rendererObjectNames)
-                if (r.gameObject.name.Contains(kw)) { renderers.Add(r); break; }
+                if (r.gameObject.name.IndexOf(kw, System.StringComparison.OrdinalIgnoreCase) >= 0) { renderers.Add(r); break; }
 
         foreach (var l in FindObjectsOfType<Light>(true))
             foreach (var kw in lightObjectNames)
-                if (l.gameObject.name.Contains(kw)) { lights.Add(l); break; }
+                if (l.gameObject.name.IndexOf(kw, System.StringComparison.OrdinalIgnoreCase) >= 0) { lights.Add(l); break; }
 
         var pairedLights = new HashSet<Light>();
 
@@ -159,10 +160,23 @@ public class BR_FluorescentFlicker : MonoBehaviour
         {
             yield return new WaitForSeconds(Random.Range(blackoutMinInterval, blackoutMaxInterval));
 
+            // 씬의 모든 라이트 수집 후 전부 끔
+            var allLights = FindObjectsOfType<Light>(true);
+            var wasEnabled = new bool[allLights.Length];
+            for (int i = 0; i < allLights.Length; i++)
+            {
+                wasEnabled[i] = allLights[i].enabled;
+                allLights[i].enabled = false;
+            }
+
             globalBlackout = true;
             foreach (var unit in units) SetUnit(unit, false);
 
-            yield return new WaitForSeconds(blackoutDuration);
+            yield return new WaitForSeconds(Random.Range(blackoutMinDuration, blackoutMaxDuration));
+
+            // 원래 상태로 복구
+            for (int i = 0; i < allLights.Length; i++)
+                allLights[i].enabled = wasEnabled[i];
 
             globalBlackout = false;
             foreach (var unit in units) SetUnit(unit, true);
