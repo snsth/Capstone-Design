@@ -3236,11 +3236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09ccafc57a6c6fe439bcf308617884a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BR_FlashlightController
-  intensity: 8000
-  range: 25
-  spotAngle: 60
-  innerAngle: 30
-  lightColor: {r: 1, g: 1, b: 1, a: 1}
+  spotLight: {fileID: 0}
 --- !u!1 &502679434
 GameObject:
   m_ObjectHideFlags: 0
@@ -5107,7 +5103,7 @@ MonoBehaviour:
   deathLensDistortion: -0.45
   deathFilmGrain: 0.284
   deathColorFilter: {r: 0.72, g: 0.07, b: 0.04, a: 1}
-  deathPostExposure: 0.13
+  deathPostExposure: -1.07
 --- !u!4 &841195591
 Transform:
   m_ObjectHideFlags: 0
@@ -9417,7 +9413,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5613962889345783853, guid: a9a8f53892f247a45af19845af682309, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 6.9079723
+      value: 6.907942
       objectReference: {fileID: 0}
     - target: {fileID: 5623738533350257619, guid: a9a8f53892f247a45af19845af682309, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
@@ -9577,7 +9573,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9080338873931619399, guid: a9a8f53892f247a45af19845af682309, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 16.47631
+      value: 16.476295
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -10412,11 +10408,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09ccafc57a6c6fe439bcf308617884a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BR_FlashlightController
-  intensity: 8000
-  range: 25
-  spotAngle: 60
-  innerAngle: 30
-  lightColor: {r: 1, g: 1, b: 1, a: 1}
+  spotLight: {fileID: 0}
 --- !u!1 &1723116117
 GameObject:
   m_ObjectHideFlags: 0
