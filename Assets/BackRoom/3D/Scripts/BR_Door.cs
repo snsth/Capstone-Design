@@ -89,6 +89,16 @@ public class BR_Door : MonoBehaviour
         IsOpen = true;
         animating = true;
 
+        // 이름이 정확히 "BR_MonsterSpawner"인 오브젝트에서 추가 스폰
+        var spawnerObj = GameObject.Find("BR_MonsterSpawner");
+        if (spawnerObj != null)
+            spawnerObj.GetComponent<BR_MonsterSpawner>()?.Activate();
+
+        // 모든 몬스터 시야 감지 해제 → 무조건 추격
+        BR_Monster.alwaysChase = true;
+
+        BR_SoundManager.Instance?.StartZombieScreamLoop();
+
         if (isExitDoor)
             StartCoroutine(Escape());
     }

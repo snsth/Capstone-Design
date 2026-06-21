@@ -21,6 +21,13 @@ public class BR_MonsterSpawner : MonoBehaviour
         SpawnMonsters();
     }
 
+    // 문 열릴 때 추가 대량 스폰
+    public void Activate()
+    {
+        if (monsterPrefab == null) return;
+        SpawnMonsters();
+    }
+
     void SpawnMonsters()
     {
         var pc = FindObjectOfType<BR_PlayerController>();

@@ -52,7 +52,6 @@ public class BR_PlayerController : MonoBehaviour
     bool submerged;
     public bool IsSubmerged => submerged;
     float currentAir;
-    float footstepTimer;
 
     void Awake()
     {
@@ -126,7 +125,8 @@ public class BR_PlayerController : MonoBehaviour
 
     void GroundMove()
     {
-        if (cc.isGrounded && vertVel.y < 0f) vertVel.y = -2f;
+        bool grounded = cc.isGrounded;
+        if (grounded && vertVel.y < 0f) vertVel.y = -2f;
 
         float x = Input.GetAxisRaw("Horizontal");
         float z = Input.GetAxisRaw("Vertical");
@@ -134,7 +134,7 @@ public class BR_PlayerController : MonoBehaviour
         Vector3 move = (transform.right * x + transform.forward * z).normalized;
         cc.Move(move * (sprint ? sprintSpeed : walkSpeed) * Time.deltaTime);
 
-        if (Input.GetButtonDown("Jump") && cc.isGrounded)
+        if (Input.GetButtonDown("Jump") && grounded)
             vertVel.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
 
         vertVel.y += gravity * Time.deltaTime;
@@ -186,20 +186,11 @@ public class BR_PlayerController : MonoBehaviour
         float freq = isSprinting ? sprintBobFreq : walkBobFreq;
         if (isMoving)
         {
+            float prev = bobTimer;
             bobTimer += Time.deltaTime * freq;
-
-            // 발소리: 한 스텝(반 bob 주기)마다 재생
-            float stepInterval = isSprinting ? 1f / (sprintBobFreq * 2f) : 1f / (walkBobFreq * 2f);
-            if (footstepTimer <= 0f)
-            {
+            // 헤드밥 반 사이클마다 한 번 = 한 걸음
+            if (Mathf.FloorToInt(bobTimer) > Mathf.FloorToInt(prev))
                 BR_SoundManager.Instance?.PlayFootstep();
-                footstepTimer = stepInterval;
-            }
-            footstepTimer -= Time.deltaTime;
-        }
-        else
-        {
-            footstepTimer = 0f;
         }
 
         float amplY = isMoving ? (isSprinting ? sprintBobAmplY : walkBobAmplY) : 0f;

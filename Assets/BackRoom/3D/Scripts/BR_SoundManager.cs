@@ -13,9 +13,17 @@ public class BR_SoundManager : MonoBehaviour
     public AudioClip waterEntryClip;
     [Range(0f, 1f)] public float waterEntryVolume = 0.85f;
 
-    [Header("배경음 - 항상 재생 (Ambient)")]
+    [Header("배경음 (BGM) - 항상 재생")]
+    public AudioClip bgmClip;
+    [Range(0f, 1f)] public float bgmVolume = 0.35f;
+
+    [Header("수중 사운드 (Underwater)")]
     public AudioClip ambientClip;
     [Range(0f, 1f)] public float ambientVolume = 0.35f;
+
+    [Header("죽음 연출 (Death)")]
+    public AudioClip zombieScreamClip;
+    [Range(0f, 1f)] public float zombieScreamVolume = 1f;
 
     [Header("형광등 지지직 (Fluorescent Buzz)")]
     public AudioClip fluorescentBuzzClip;
@@ -27,6 +35,7 @@ public class BR_SoundManager : MonoBehaviour
 
     AudioSource footstepSource;
     AudioSource sfxSource;
+    AudioSource bgmSource;
     AudioSource ambientSource;
     AudioSource fluorescentSource;
     bool inWater;
@@ -37,13 +46,20 @@ public class BR_SoundManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        footstepSource = AddSource(loop: false);
-        sfxSource = AddSource(loop: false);
-        ambientSource = AddSource(loop: true);
+        footstepSource    = AddSource(loop: false);
+        sfxSource         = AddSource(loop: false);
+        bgmSource         = AddSource(loop: true);
+        ambientSource     = AddSource(loop: true);
         fluorescentSource = AddSource(loop: false);
 
-        // 수중 사운드는 물 진입 시에만 시작 — 기본은 정지
-        ambientSource.clip = ambientClip;
+        if (bgmClip != null)
+        {
+            bgmSource.clip   = bgmClip;
+            bgmSource.volume = bgmVolume;
+            bgmSource.Play();
+        }
+
+        ambientSource.clip   = ambientClip;
         ambientSource.volume = ambientVolume;
 
         StartCoroutine(FluorescentLoop());
@@ -52,7 +68,7 @@ public class BR_SoundManager : MonoBehaviour
     AudioSource AddSource(bool loop)
     {
         var src = gameObject.AddComponent<AudioSource>();
-        src.loop = loop;
+        src.loop        = loop;
         src.playOnAwake = false;
         src.spatialBlend = 0f;
         return src;
@@ -63,12 +79,38 @@ public class BR_SoundManager : MonoBehaviour
     {
         if (inWater) return;
         if (footstepClips == null || footstepClips.Length == 0) return;
-        footstepSource.clip = footstepClips[Random.Range(0, footstepClips.Length)];
+        footstepSource.clip   = footstepClips[Random.Range(0, footstepClips.Length)];
         footstepSource.volume = footstepVolume;
         footstepSource.Play();
     }
 
-    // 물 진입 소리: OnTriggerEnter에서 첫 물 접촉 시 호출
+    // 좀비 비명 1회
+    public void PlayZombieScream()
+    {
+        if (zombieScreamClip == null) return;
+        sfxSource.PlayOneShot(zombieScreamClip, zombieScreamVolume);
+    }
+
+    // 문 열린 뒤 계속 반복
+    public void StartZombieScreamLoop()
+    {
+        StartCoroutine(ZombieScreamLoop());
+    }
+
+    IEnumerator ZombieScreamLoop()
+    {
+        while (true)
+        {
+            if (zombieScreamClip != null)
+                sfxSource.PlayOneShot(zombieScreamClip, zombieScreamVolume);
+            float wait = zombieScreamClip != null
+                ? zombieScreamClip.length + Random.Range(0.3f, 1.2f)
+                : 3f;
+            yield return new WaitForSeconds(wait);
+        }
+    }
+
+    // 물 진입 소리
     public void PlayWaterEntry()
     {
         if (waterEntryClip == null) return;
@@ -98,7 +140,6 @@ public class BR_SoundManager : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(Random.Range(fluorescentMinInterval, fluorescentMaxInterval));
-
             if (fluorescentBuzzClip == null) continue;
 
             int bursts = Random.Range(1, 4);
