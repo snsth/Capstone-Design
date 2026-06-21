@@ -1,13 +1,19 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BR_FluorescentFlicker : MonoBehaviour
 {
-    [Header("깜빡일 라이트 (형광등 Light + 포인트 라이트 드래그)")]
+    [Header("깜빡일 라이트 (비워두면 이름으로 자동 탐색)")]
     public Light[] lights;
 
-    [Header("형광등 메시 Renderer (여러 개 드래그 가능)")]
+    [Header("형광등 메시 Renderer (비워두면 이름으로 자동 탐색)")]
     public Renderer[] targetRenderers;
+
+    [Header("자동 탐색 오브젝트 이름 (번호 붙은 사본도 자동 포함)")]
+    public string[] rendererObjectNames = { "archway_corner", "Ceiling_light", "Wall_light" };
+    public string[] lightObjectNames    = { "Point Light" };
+
     [Tooltip("-1 이면 모든 머티리얼, 특정 번호 지정 시 해당 머티리얼만 Emission 조절")]
     public int emissiveMaterialIndex = -1;
 
@@ -33,6 +39,8 @@ public class BR_FluorescentFlicker : MonoBehaviour
 
     void Start()
     {
+        AutoFindObjects();
+
         if (targetRenderers != null && targetRenderers.Length > 0)
         {
             instancedMats = new Material[targetRenderers.Length][];
@@ -63,14 +71,56 @@ public class BR_FluorescentFlicker : MonoBehaviour
         StartCoroutine(FlickerLoop());
     }
 
+    void AutoFindObjects()
+    {
+        // Renderer 자동 탐색 — Inspector에 이미 채워져 있으면 건너뜀
+        if (targetRenderers == null || targetRenderers.Length == 0)
+        {
+            var found = new List<Renderer>();
+            var allRenderers = GetComponentsInChildren<Renderer>(true);
+            foreach (var r in allRenderers)
+            {
+                foreach (var name in rendererObjectNames)
+                {
+                    // "Ceiling_light", "Ceiling_light (1)", "Ceiling_light (2)" 등 전부 포함
+                    if (r.gameObject.name == name || r.gameObject.name.StartsWith(name + " ("))
+                    {
+                        found.Add(r);
+                        break;
+                    }
+                }
+            }
+            if (found.Count > 0)
+                targetRenderers = found.ToArray();
+        }
+
+        // Light 자동 탐색 — Inspector에 이미 채워져 있으면 건너뜀
+        if (lights == null || lights.Length == 0)
+        {
+            var found = new List<Light>();
+            var allLights = GetComponentsInChildren<Light>(true);
+            foreach (var l in allLights)
+            {
+                foreach (var name in lightObjectNames)
+                {
+                    if (l.gameObject.name == name || l.gameObject.name.StartsWith(name + " ("))
+                    {
+                        found.Add(l);
+                        break;
+                    }
+                }
+            }
+            if (found.Count > 0)
+                lights = found.ToArray();
+        }
+    }
+
     void SetState(bool on)
     {
-        // 라이트 켜기/끄기
         if (lights != null)
             foreach (var l in lights)
                 if (l != null) l.enabled = on;
 
-        // Emission 켜기/끄기
         if (instancedMats == null) return;
 
         for (int r = 0; r < instancedMats.Length; r++)

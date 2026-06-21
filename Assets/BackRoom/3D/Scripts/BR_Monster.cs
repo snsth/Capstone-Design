@@ -7,11 +7,13 @@ using UnityEngine.SceneManagement;
 public class BR_Monster : MonoBehaviour
 {
     [Header("시야 감지")]
-    [Tooltip("플레이어가 감지할 수 있는 최대 거리")]
-    public float detectionRange = 30f;
+    [Tooltip("이 거리 안에서 플레이어가 바라보면 몬스터 동결")]
+    public float detectionRange = 40f;
 
     [Header("이동")]
     public float moveSpeed = 4f;
+    [Tooltip("이 거리 이내로 플레이어가 접근하면 추격 시작")]
+    public float chaseRange = 15f;
     [Tooltip("이 거리 이하로 접근하면 플레이어 사망")]
     public float killDistance = 1.5f;
 
@@ -70,16 +72,23 @@ public class BR_Monster : MonoBehaviour
         }
         else
         {
-            // NavMesh 이탈 상태에서는 벽 관통 이동 금지 — 그냥 멈춤
-            if (agent.isOnNavMesh)
+            bool inChaseRange = Vector3.Distance(transform.position, player.position) <= chaseRange;
+
+            if (inChaseRange && agent.isOnNavMesh)
             {
                 agent.isStopped = false;
                 agent.SetDestination(player.position);
             }
+            else if (!inChaseRange && agent.isOnNavMesh)
+            {
+                agent.isStopped = true;
+                agent.velocity = Vector3.zero;
+            }
+
             if (animator != null)
             {
-                animator.speed = 1f;
-                PlayAnim(walkStateName);
+                animator.speed = inChaseRange ? 1f : 0f;
+                if (inChaseRange) PlayAnim(walkStateName);
             }
         }
 
@@ -97,28 +106,42 @@ public class BR_Monster : MonoBehaviour
     {
         if (playerCam == null) return false;
 
-        Vector3 monsterCenter = transform.position + Vector3.up * 1f;
-
-        float dist = Vector3.Distance(playerCamera.position, monsterCenter);
-        if (dist > detectionRange) return false;
-
-        Vector3 vp = playerCam.WorldToViewportPoint(monsterCenter);
-        if (!(vp.z > 0f && vp.x >= 0f && vp.x <= 1f && vp.y >= 0f && vp.y <= 1f))
-            return false;
-
-        Vector3 dir = (monsterCenter - playerCamera.position).normalized;
-        RaycastHit[] hits = Physics.RaycastAll(playerCamera.position, dir,
-            dist - 0.2f, ~0, QueryTriggerInteraction.Ignore);
-        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
-
-        foreach (var hit in hits)
+        // 발 / 중심 / 머리 3곳 중 하나라도 화면에 들어오면 감지
+        Vector3[] checkPoints =
         {
-            if (hit.transform == player || hit.transform.IsChildOf(player)) continue;
-            if (hit.transform.GetComponent<BR_Monster>() != null) continue;
-            return false;
+            transform.position + Vector3.up * 0.2f,
+            transform.position + Vector3.up * 1.0f,
+            transform.position + Vector3.up * 1.8f,
+        };
+
+        foreach (var point in checkPoints)
+        {
+            float dist = Vector3.Distance(playerCamera.position, point);
+            if (dist > detectionRange) continue;
+
+            Vector3 vp = playerCam.WorldToViewportPoint(point);
+            if (!(vp.z > 0f && vp.x >= 0f && vp.x <= 1f && vp.y >= 0f && vp.y <= 1f))
+                continue;
+
+            // 벽 감지
+            Vector3 dir = (point - playerCamera.position).normalized;
+            RaycastHit[] hits = Physics.RaycastAll(playerCamera.position, dir,
+                dist - 0.2f, ~0, QueryTriggerInteraction.Ignore);
+            System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+            bool blocked = false;
+            foreach (var hit in hits)
+            {
+                if (hit.transform == player || hit.transform.IsChildOf(player)) continue;
+                if (hit.transform.GetComponent<BR_Monster>() != null) continue;
+                blocked = true;
+                break;
+            }
+
+            if (!blocked) return true;
         }
 
-        return true;
+        return false;
     }
 
     void PlayAnim(string stateName)
