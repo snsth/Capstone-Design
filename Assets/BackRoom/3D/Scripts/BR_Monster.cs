@@ -11,7 +11,10 @@ public class BR_Monster : MonoBehaviour
     public float detectionRange = 40f;
 
     [Header("이동")]
-    public float moveSpeed = 4f;
+    [Tooltip("첫 플레이 속도")]
+    public float moveSpeed = 15f;
+    [Tooltip("한 번 죽은 뒤 속도")]
+    public float moveSpeedAfterDeath = 4f;
     [Tooltip("이 거리 이내로 플레이어가 접근하면 추격 시작")]
     public float chaseRange = 500f;
     [Tooltip("이 거리 이하로 접근하면 플레이어 사망")]
@@ -55,7 +58,8 @@ public class BR_Monster : MonoBehaviour
         anyKilling = false;
 
         agent = GetComponent<NavMeshAgent>();
-        agent.speed            = moveSpeed;
+        float speed = PlayerPrefs.GetInt("BR_HasDied", 0) == 1 ? moveSpeedAfterDeath : moveSpeed;
+        agent.speed            = speed;
         agent.angularSpeed     = 720f;
         agent.acceleration     = 100f;
         agent.stoppingDistance = killDistance;
@@ -178,9 +182,11 @@ public class BR_Monster : MonoBehaviour
 
         if (playerCamera != null)
         {
-            Vector3    headPos   = transform.position + Vector3.up * headHeight;
-            Vector3    camTarget = headPos + transform.forward * closeupDistance;
-            Quaternion rotTarget = Quaternion.LookRotation(headPos - camTarget);
+            Vector3 headPos = transform.position + Vector3.up * headHeight;
+            // 플레이어 카메라 → 몬스터 방향으로 closeupDistance 만큼 앞에 배치
+            Vector3 camDir    = (headPos - playerCamera.position).normalized;
+            Vector3 camTarget = headPos - camDir * closeupDistance;
+            Quaternion rotTarget = Quaternion.LookRotation(camDir);
 
             playerCamera.SetParent(null);
 
@@ -251,6 +257,8 @@ public class BR_Monster : MonoBehaviour
             yield return new WaitForSeconds(deathHoldTime);
         }
 
+        PlayerPrefs.SetInt("BR_HasDied", 1);
+        PlayerPrefs.Save();
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
