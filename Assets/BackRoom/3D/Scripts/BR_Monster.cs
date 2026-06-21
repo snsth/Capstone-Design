@@ -44,6 +44,7 @@ public class BR_Monster : MonoBehaviour
     Transform player;
     Transform playerCamera;
     Camera playerCam;
+    BR_PlayerController playerCtrl;
     bool caught;
 
     // 문 열린 뒤 모든 몬스터를 강제 추격으로 전환하는 전역 플래그
@@ -69,6 +70,7 @@ public class BR_Monster : MonoBehaviour
         {
             player       = pc.transform;
             playerCamera = pc.cameraTransform;
+            playerCtrl   = pc;
         }
 
         if (animator == null)
@@ -80,6 +82,9 @@ public class BR_Monster : MonoBehaviour
     void Update()
     {
         if (player == null || caught) return;
+
+        if (alwaysChase && playerCtrl != null && agent.isOnNavMesh)
+            agent.speed = playerCtrl.sprintSpeed + 1f;
 
         bool observed = !alwaysChase && IsObservedByPlayer();
 

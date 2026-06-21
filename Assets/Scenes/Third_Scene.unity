@@ -2463,6 +2463,29 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 336787856}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &371612420 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4555697749917342072, guid: a9a8f53892f247a45af19845af682309, type: 3}
+  m_PrefabInstance: {fileID: 1568060078}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &371612425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 371612420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7ef4033b6377e24b927620d937db94d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BR_StairsSpawn
+  monsterPrefab: {fileID: 2488876341119340763, guid: 5daabb08a4a2f3a4daa1f3908ae8881a, type: 3}
+  spawnCount: 3
+  spawnRadius: 10
+  minDistPlayer: 6
+  floorYTolerance: 3
+  respawnCooldown: 5
 --- !u!1001 &376832680
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2599,6 +2622,29 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3766281748632068820, guid: 6e9ff403aed784645912843154b64ef7, type: 3}
   m_PrefabInstance: {fileID: 387592629}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &395025996 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4555697749917342072, guid: a9a8f53892f247a45af19845af682309, type: 3}
+  m_PrefabInstance: {fileID: 1864712484}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &395026001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 395025996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7ef4033b6377e24b927620d937db94d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BR_StairsSpawn
+  monsterPrefab: {fileID: 2488876341119340763, guid: 5daabb08a4a2f3a4daa1f3908ae8881a, type: 3}
+  spawnCount: 3
+  spawnRadius: 10
+  minDistPlayer: 6
+  floorYTolerance: 3
+  respawnCooldown: 5
 --- !u!1 &459832813
 GameObject:
   m_ObjectHideFlags: 0
@@ -3054,7 +3100,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4210929927539615804, guid: 07f6f25284c4ce9478e369b64999280a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 237.77
+      value: 237.987
       objectReference: {fileID: 0}
     - target: {fileID: 4210929927539615804, guid: 07f6f25284c4ce9478e369b64999280a, type: 3}
       propertyPath: m_LocalPosition.z
@@ -7950,6 +7996,29 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1394239519}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1402442152 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4555697749917342072, guid: a9a8f53892f247a45af19845af682309, type: 3}
+  m_PrefabInstance: {fileID: 1509403390}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1402442157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1402442152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7ef4033b6377e24b927620d937db94d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BR_StairsSpawn
+  monsterPrefab: {fileID: 2488876341119340763, guid: 5daabb08a4a2f3a4daa1f3908ae8881a, type: 3}
+  spawnCount: 3
+  spawnRadius: 10
+  minDistPlayer: 6
+  floorYTolerance: 3
+  respawnCooldown: 5
 --- !u!1 &1418362539
 GameObject:
   m_ObjectHideFlags: 0
@@ -8112,6 +8181,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1309518434}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1441459758 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4461030259861227210, guid: a9a8f53892f247a45af19845af682309, type: 3}
+  m_PrefabInstance: {fileID: 1864712484}
+  m_PrefabAsset: {fileID: 0}
+--- !u!143 &1441459760
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1441459758}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1444032948
 GameObject:
   m_ObjectHideFlags: 0
@@ -8835,6 +8934,9 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 917969761}
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4555697749917342072, guid: a9a8f53892f247a45af19845af682309, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1402442157}
     - targetCorrespondingSourceObject: {fileID: 7272353757552188025, guid: a9a8f53892f247a45af19845af682309, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1509403402}
@@ -8850,6 +8952,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4784312672586257155, guid: a9a8f53892f247a45af19845af682309, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1509403398}
+    - targetCorrespondingSourceObject: {fileID: 4784312672586257155, guid: a9a8f53892f247a45af19845af682309, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1509403406}
   m_SourcePrefab: {fileID: 100100000, guid: a9a8f53892f247a45af19845af682309, type: 3}
 --- !u!4 &1509403391 stripped
 Transform:
@@ -8946,6 +9051,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a6d72ef7a4a9504781bf7a84f51616d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BR_WaterZone
+--- !u!114 &1509403406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1509403393}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e201501074821eb448ca15196967dd17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BR_PoolClear
+  clearRadius: 25
 --- !u!4 &1525680399 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2884177187300745121, guid: a9a8f53892f247a45af19845af682309, type: 3}
@@ -9413,7 +9531,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5613962889345783853, guid: a9a8f53892f247a45af19845af682309, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 6.907942
+      value: 6.907812
       objectReference: {fileID: 0}
     - target: {fileID: 5623738533350257619, guid: a9a8f53892f247a45af19845af682309, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
@@ -9573,7 +9691,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9080338873931619399, guid: a9a8f53892f247a45af19845af682309, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 16.476295
+      value: 16.47623
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -9586,6 +9704,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5684976063189001152, guid: a9a8f53892f247a45af19845af682309, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1256074613}
+    - targetCorrespondingSourceObject: {fileID: 4555697749917342072, guid: a9a8f53892f247a45af19845af682309, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 371612425}
     - targetCorrespondingSourceObject: {fileID: 7272353757552188025, guid: a9a8f53892f247a45af19845af682309, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1568060088}
@@ -9601,6 +9722,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4784312672586257155, guid: a9a8f53892f247a45af19845af682309, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1568060084}
+    - targetCorrespondingSourceObject: {fileID: 4784312672586257155, guid: a9a8f53892f247a45af19845af682309, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1568060092}
   m_SourcePrefab: {fileID: 100100000, guid: a9a8f53892f247a45af19845af682309, type: 3}
 --- !u!1 &1568060079 stripped
 GameObject:
@@ -9687,6 +9811,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a6d72ef7a4a9504781bf7a84f51616d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BR_WaterZone
+--- !u!114 &1568060092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1568060079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e201501074821eb448ca15196967dd17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BR_PoolClear
+  clearRadius: 25
 --- !u!1 &1625452315
 GameObject:
   m_ObjectHideFlags: 0
@@ -9800,6 +9937,79 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1625452315}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1633654242
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1633654244}
+  - component: {fileID: 1633654243}
+  - component: {fileID: 1633654245}
+  m_Layer: 0
+  m_Name: BR_RoomManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1633654243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633654242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01ff7fb0914050e48907e9310c9cceaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BR_StairsBlocker
+  nameKeyword: Stairs
+  blockRadius: 3
+  blockHeight: 6
+  heightOffset: 2
+  warpDelay: 1.2
+  warpDistance: 8
+--- !u!4 &1633654244
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633654242}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 20.04882, y: 230.37227, z: -44.56594}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1633654245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633654242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad0d5dcc2be79d2468f4ed55f25624e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BR_RoomManager
+  roomKeyword: BackRoom_Pool
+  poolTriggerName: Pool (3)
+  stairKeyword: Stairs
+  poolTriggerRadius: 4
+  stairTriggerRadius: 5
+  monsterPrefab: {fileID: 2488876341119340763, guid: 5daabb08a4a2f3a4daa1f3908ae8881a, type: 3}
+  monstersPerRoom: 3
+  spawnRadius: 12
+  minDistFromPlayer: 8
+  player: {fileID: 0}
 --- !u!1001 &1640092311
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11767,6 +11977,12 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1927758665}
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4461030259861227210, guid: a9a8f53892f247a45af19845af682309, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1441459760}
+    - targetCorrespondingSourceObject: {fileID: 4555697749917342072, guid: a9a8f53892f247a45af19845af682309, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 395026001}
     - targetCorrespondingSourceObject: {fileID: 7272353757552188025, guid: a9a8f53892f247a45af19845af682309, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1864712496}
@@ -11782,6 +11998,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4784312672586257155, guid: a9a8f53892f247a45af19845af682309, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1864712492}
+    - targetCorrespondingSourceObject: {fileID: 4784312672586257155, guid: a9a8f53892f247a45af19845af682309, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1864712500}
   m_SourcePrefab: {fileID: 100100000, guid: a9a8f53892f247a45af19845af682309, type: 3}
 --- !u!1 &1864712485 stripped
 GameObject:
@@ -11878,6 +12097,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a6d72ef7a4a9504781bf7a84f51616d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BR_WaterZone
+--- !u!114 &1864712500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1864712487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e201501074821eb448ca15196967dd17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BR_PoolClear
+  clearRadius: 25
 --- !u!1 &1886566878
 GameObject:
   m_ObjectHideFlags: 0
@@ -13439,3 +13671,4 @@ SceneRoots:
   - {fileID: 1547400463}
   - {fileID: 1925253781}
   - {fileID: 841195591}
+  - {fileID: 1633654244}
