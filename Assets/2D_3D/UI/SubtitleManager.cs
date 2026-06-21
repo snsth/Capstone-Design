@@ -7,6 +7,7 @@ public class SubtitleManager : MonoBehaviour
     [SerializeField]
     private PlayerCameraMovement cameraMovement;
 
+
     [SerializeField]
     private TMP_Text subtitleText;
 
@@ -17,6 +18,7 @@ public class SubtitleManager : MonoBehaviour
 
     private void ShowIntroSubtitle()
     {
+
         string[] introLines =
         {
             "???",
@@ -48,5 +50,6 @@ public class SubtitleManager : MonoBehaviour
         }
 
         subtitleText.gameObject.SetActive(false);
+
     }
 }

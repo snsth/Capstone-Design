@@ -14,6 +14,7 @@ public class WrongWayTrigger : MonoBehaviour
 
     [SerializeField]
     private AudioSource monsterBGM;
+
     private bool monsterSpawned;
 
     [Header("Settings")]
@@ -63,6 +64,7 @@ public class WrongWayTrigger : MonoBehaviour
             if (warningCoroutine != null)
             {
                 StopCoroutine(warningCoroutine);
+                warningCoroutine = null;
             }
 
             wrongWayText.gameObject.SetActive(false);
@@ -85,6 +87,24 @@ public class WrongWayTrigger : MonoBehaviour
         wrongWayText.gameObject.SetActive(false);
     }
 
+    private IEnumerator SpawnMonsterAfterDelay()
+    {
+        yield return new WaitForSeconds(3f);
+
+        if (monsterSpawner != null)
+        {
+            monsterSpawner.SpawnMonster();
+        }
+
+        if (monsterBGM != null)
+        {
+            monsterBGM.volume = 0f;
+            monsterBGM.Play();
+
+            StartCoroutine(FadeInBGM());
+        }
+    }
+
     private IEnumerator ShowProgressiveWarnings()
     {
         wrongWayText.gameObject.SetActive(true);
@@ -95,45 +115,40 @@ public class WrongWayTrigger : MonoBehaviour
         {
             wrongWayText.text = warningMessages[index];
 
-            if (index == warningMessages.Length - 1 && !monsterSpawned)
-            {
-                monsterSpawned = true;
-
-                if (monsterSpawner != null)
-                {
-                    monsterSpawner.SpawnMonster();
-                }
-
-                if (monsterBGM != null)
-                {
-                    monsterBGM.volume = 0f;
-                    monsterBGM.Play();
-
-                    while (monsterBGM.volume < 1f)
-                    {
-                        monsterBGM.volume += Time.deltaTime * 0.1f;
-                        yield return null;
-                    }
-                }
-                
-            }
-
             float t = (float)index / (warningMessages.Length - 1);
 
             wrongWayText.color =
                 Color.Lerp(Color.white, Color.red, t);
 
-            yield return new WaitForSeconds(messageInterval);
+            // 마지막 경고문 도달
+            if (index == warningMessages.Length - 1 &&
+            !monsterSpawned)
+            {
+                monsterSpawned = true;
+
+                StartCoroutine(SpawnMonsterAfterDelay());
+            }
+
+            yield return new WaitForSeconds(
+                messageInterval);
 
             if (index < warningMessages.Length - 1)
             {
                 index++;
             }
-
-            if (index == warningMessages.Length - 1)
-            {
-                monsterSpawner.SpawnMonster();
-            }
         }
+    }
+
+    private IEnumerator FadeInBGM()
+    {
+        while (monsterBGM.volume < 1f)
+        {
+            monsterBGM.volume +=
+                Time.deltaTime * 0.1f;
+
+            yield return null;
+        }
+
+        monsterBGM.volume = 1f;
     }
 }

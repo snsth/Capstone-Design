@@ -15,6 +15,9 @@ public class JumpScareManager : MonoBehaviour
     [SerializeField]
     private AudioSource jumpScareSound;
 
+    [SerializeField]
+    private JumpScareImage jumpScareImage;
+
     private bool isPlaying;
 
     public void StartJumpScare()
@@ -41,7 +44,7 @@ public class JumpScareManager : MonoBehaviour
         // 카메라 전환
         mainCamera.enabled = false;
         jumpScareCamera.enabled = true;
-
+        jumpScareImage.Play();
         // 사운드
         if (jumpScareSound != null)
         {

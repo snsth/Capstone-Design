@@ -6,12 +6,15 @@ public class CarSwitching : MonoBehaviour
     [SerializeField] private Behaviour carControlScript;
     [SerializeField] private GameObject carInterior;
     [SerializeField] private GameObject[] prefabsToDisable;
+    [SerializeField]
+    private GameObject boundaryZone;
 
     [Header("UI")]
     [SerializeField] private GameObject enterCarText;
 
     private bool playerInRange;
     private bool hasEnteredCar;
+    public bool HasEnteredCar => hasEnteredCar;
 
     private void Start()
     {
@@ -54,6 +57,11 @@ public class CarSwitching : MonoBehaviour
 
         if (enterCarText)
             enterCarText.SetActive(false);
+
+        if (boundaryZone)
+        {
+            boundaryZone.SetActive(false);
+        }
     }
 
     private void OnTriggerEnter(Collider other)

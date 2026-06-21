@@ -5,11 +5,19 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/2D_Scene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 0
+    path: Assets/Scenes/2D Scene.unity
+    guid: bdfeb221001eb474f87a8f770ce82f16
+  - enabled: 0
+    path: Assets/2D_3D/Scenes/Second Scene.unity
+    guid: 32b17ea901274364cbd9f28096ee37b5
+  - enabled: 0
+    path: Assets/Scenes/Third_Scene.unity
+    guid: f633157eba1a1294abb28b65f4c08007
   m_configObjects:
     com.unity.adaptivePerformance.basic.provider_settings: {fileID: 11400000, guid: 9e5ba369500043a418b19620c0179da0, type: 2}
     com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: 83e2fb8fa44aec842b6c3890aa968091, type: 2}
     com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: 418e5a2731b825e40a00e14214ff5552, type: 2}
-  m_UseUCBPForAssetBundles: 0

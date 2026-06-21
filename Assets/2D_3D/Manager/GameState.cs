@@ -6,6 +6,9 @@ public class GameState : MonoBehaviour
 
     public bool hasEatenFood;
 
+    [SerializeField]
+    private GameObject foodObject;
+
     private void Awake()
     {
         if (Instance == null)
@@ -15,6 +18,15 @@ public class GameState : MonoBehaviour
         else
         {
             Destroy(gameObject);
+        }
+    }
+
+    private void Update()
+    {
+        if (!hasEatenFood && foodObject == null)
+        {
+            hasEatenFood = true;
+            Debug.Log("음식을 먹었다!");
         }
     }
 }

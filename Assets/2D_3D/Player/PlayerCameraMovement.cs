@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using System;
 using Random = UnityEngine.Random;
@@ -198,7 +199,7 @@ public class PlayerCameraMovement : MonoBehaviour
         {
             playerMovement.enabled = false;
         }
-
+        
         float transitionDelay = Mathf.Clamp(Random.Range(preTransitionDelayRange.x, preTransitionDelayRange.y), 0f, preTransitionDelayRange.y);
         float shakeElapsed = 0f;
         while (shakeElapsed < transitionDelay)
