@@ -40,6 +40,9 @@ public class BR_Inventory : MonoBehaviour
     {
         if (flashlight == null)
             flashlight = FindAnyObjectByType<BR_FlashlightController>();
+        if (flashlight == null)
+            flashlight = new GameObject("[BR_FlashlightController]")
+                             .AddComponent<BR_FlashlightController>();
     }
 
     // Returns the camera transform via the most reliable path available
