@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Scenes/2D Scene.unity
     guid: bdfeb221001eb474f87a8f770ce82f16
   - enabled: 0
-    path: Assets/2D_3D/Scenes/Second Scene.unity
+    path: Assets/Scenes/Second Scene.unity
     guid: 32b17ea901274364cbd9f28096ee37b5
   - enabled: 0
     path: Assets/Scenes/Third_Scene.unity
