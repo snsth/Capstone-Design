@@ -88,10 +88,10 @@ public class BR_PostProcessing : MonoBehaviour
         StartCoroutine(ChaseRoutine(fadeDuration));
     }
 
-    // 익사 — 서서히 어두워지며 씬 리로드
-    public void TriggerDrowningEffect(float fadeDuration = 2.5f)
+    // 익사 — 서서히 어두워지며 EndScene으로 전환
+    public void TriggerDrowningEffect(float fadeDuration = 2.5f, float holdDuration = 1.5f)
     {
-        StartCoroutine(DrowningRoutine(fadeDuration));
+        StartCoroutine(DrowningRoutine(fadeDuration, holdDuration));
     }
 
     // 산소량에 따라 화면 어둡게 (ratio 1=정상, 0=완전 암전)
@@ -138,7 +138,7 @@ public class BR_PostProcessing : MonoBehaviour
         }
     }
 
-    IEnumerator DrowningRoutine(float dur)
+    IEnumerator DrowningRoutine(float dur, float hold)
     {
         colorAdj.active = true;
         filmGrain.active = true;
@@ -156,10 +156,11 @@ public class BR_PostProcessing : MonoBehaviour
             yield return null;
         }
 
+        yield return new WaitForSeconds(hold);
+
         PlayerPrefs.SetInt("BR_HasDied", 1);
         PlayerPrefs.Save();
-        UnityEngine.SceneManagement.SceneManager.LoadScene(
-            UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene("EndScene");
     }
 
     IEnumerator DeathRoutine()
