@@ -52,3 +52,12 @@ crashlytics-build.properties
 # Project description documents
 Project_description/
 *.pptx
+
+# Unity player builds (output folders)
+/HorrorGame/
+*_BurstDebugInformation_DoNotShip/
+*_BackUpThisFolder_ButDontShipItWithYourGame/
+
+# Unity crash/scene recovery files
+/[Aa]ssets/_Recovery/
+/[Aa]ssets/_Recovery.meta

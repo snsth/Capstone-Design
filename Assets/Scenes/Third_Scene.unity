@@ -3096,15 +3096,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4210929927539615804, guid: 07f6f25284c4ce9478e369b64999280a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 32.32268
+      value: -0.8
       objectReference: {fileID: 0}
     - target: {fileID: 4210929927539615804, guid: 07f6f25284c4ce9478e369b64999280a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 237.987
+      value: 220.44
       objectReference: {fileID: 0}
     - target: {fileID: 4210929927539615804, guid: 07f6f25284c4ce9478e369b64999280a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 14.168
+      value: -70.54
       objectReference: {fileID: 0}
     - target: {fileID: 4210929927539615804, guid: 07f6f25284c4ce9478e369b64999280a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3825,7 +3825,6 @@ MonoBehaviour:
   m_Script: {fileID: 861953960}
   m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.HighDefinition.Runtime::UnityEngine.Rendering.HighDefinition.SceneObjectIDMapSceneAsset
-  m_Entries: []
 --- !u!4 &631243654
 Transform:
   m_ObjectHideFlags: 19
@@ -7337,7 +7336,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
+  m_VoxelSize: 0.1
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: c89e2ab1a28a92746b90701e027a7f52, type: 2}
   m_BuildHeightMesh: 0
@@ -9967,12 +9966,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01ff7fb0914050e48907e9310c9cceaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BR_StairsBlocker
-  nameKeyword: Stairs
-  blockRadius: 3
-  blockHeight: 6
-  heightOffset: 2
-  warpDelay: 1.2
-  warpDistance: 8
 --- !u!4 &1633654244
 Transform:
   m_ObjectHideFlags: 0
@@ -10000,16 +9993,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad0d5dcc2be79d2468f4ed55f25624e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BR_RoomManager
-  roomKeyword: BackRoom_Pool
-  poolTriggerName: Pool (3)
-  stairKeyword: Stairs
-  poolTriggerRadius: 4
-  stairTriggerRadius: 5
-  monsterPrefab: {fileID: 2488876341119340763, guid: 5daabb08a4a2f3a4daa1f3908ae8881a, type: 3}
-  monstersPerRoom: 3
-  spawnRadius: 12
-  minDistFromPlayer: 8
-  player: {fileID: 0}
 --- !u!1001 &1640092311
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10580,7 +10563,6 @@ MonoBehaviour:
   m_Script: {fileID: 2053656698}
   m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.HighDefinition.Runtime::UnityEngine.Rendering.HighDefinition.SceneObjectIDMapSceneAsset
-  m_Entries: []
 --- !u!4 &1694473399
 Transform:
   m_ObjectHideFlags: 19

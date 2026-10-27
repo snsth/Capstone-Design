@@ -1546,6 +1546,9 @@ MonoBehaviour:
   directionalLightsOnly:
     m_OverrideState: 1
     m_Value: 0
+  volumetricLightingDensityCutoff:
+    m_OverrideState: 1
+    m_Value: 0
 --- !u!114 &3800931755461974402
 MonoBehaviour:
   m_ObjectHideFlags: 3
