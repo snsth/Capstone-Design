@@ -56,12 +56,15 @@ public class BR_PlayerController : MonoBehaviour
     void Awake()
     {
         cc = GetComponent<CharacterController>();
-        if (!GetComponent<Rigidbody>())
-        {
-            Rigidbody rb = gameObject.AddComponent<Rigidbody>();
-            rb.isKinematic = true;
-            rb.useGravity = false;
-        }
+
+        // [버그 수정] 예전엔 여기서 Rigidbody를 추가했는데, CharacterController와 Rigidbody를
+        // 같은 오브젝트에 두면 Unity가 컨트롤러를 비활성 처리해 "Move called on inactive controller"가 뜨고
+        // 캐릭터가 움직이지 않는다 (Unity 공식: 두 컴포넌트 공존은 undefined).
+        // 물/바다 존(BR_WaterZone, BR_OceanZone)은 자체 kinematic Rigidbody를 갖고 있고,
+        // CharacterController는 정적 트리거와도 OnTrigger 이벤트를 주고받으므로 Rigidbody 없이도 동작한다.
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null) Destroy(rb);
+
         if (cameraTransform == null)
         {
             Camera cam = GetComponentInChildren<Camera>();
@@ -77,6 +80,21 @@ public class BR_PlayerController : MonoBehaviour
     {
         if (cameraTransform != null)
             camDefaultLocalPos = cameraTransform.localPosition;
+        EnsureControllerActive();
+    }
+
+    // 컨트롤러가 어떤 이유로든 꺼져 있으면 다시 켠다 (씬에서 체크 해제돼 있거나 다른 스크립트가 끈 경우).
+    // 이 상태에서 Move를 부르면 경고만 나고 이동이 무시되므로, 호출 전에 반드시 살려둔다.
+    bool EnsureControllerActive()
+    {
+        if (cc == null) cc = GetComponent<CharacterController>();
+        if (cc == null) return false;
+        if (!cc.enabled)
+        {
+            Debug.LogWarning("[BR_PlayerController] CharacterController가 꺼져 있어 다시 켭니다.", this);
+            cc.enabled = true;
+        }
+        return cc.enabled && cc.gameObject.activeInHierarchy;
     }
 
     void Update()
@@ -111,6 +129,7 @@ public class BR_PlayerController : MonoBehaviour
 
     void Move()
     {
+        if (!EnsureControllerActive()) return;
         if (onLadder) { LadderMove(); return; }
 
         bool inWater = waterCount > 0;
